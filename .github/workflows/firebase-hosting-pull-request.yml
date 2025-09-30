@@ -17,6 +17,6 @@ jobs:
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FOODIE_DELIVER }}
+          firebaseServiceAccount: ${ secrets.FIREBASE_SERVICE_ACCOUNT_FOODIE_DELIVER }
           projectId: foodie-deliver
           channelId: live
