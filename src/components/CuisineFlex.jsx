@@ -3,7 +3,8 @@ import cuisines from "../../cuisineData.js";
 export default function CuisineFlex() {
   const navigate = useNavigate()
   return (
-    <div className="scrollbar-hide flex gap-5 overflow-x-auto overflow-y-hidden p-1 whitespace-nowrap">
+    <div className="scrollbar-hide flex gap-10 overflow-x-auto overflow-y-hidden
+     p-1 whitespace-nowrap">
       {cuisines.map((x) => (
         <div
          onClick={()=> navigate('/search-result', { state: { query: x.title } })}

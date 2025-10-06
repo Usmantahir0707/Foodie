@@ -41,8 +41,8 @@ export default function Camera({setCameraActive, setImageCaptured}) {
   const ctx = canvas.getContext('2d');
   ctx.drawImage(videoRef.current, 0, 0);
 
-  const image = canvas.toDataURL('image/png');
-  setImageCaptured(image)  
+  const img = canvas.toDataURL('image/png')
+  setImageCaptured(img)
  }, [])
   
   return (
@@ -64,8 +64,8 @@ export default function Camera({setCameraActive, setImageCaptured}) {
         <div 
         onClick={()=>{
           captureImage();
-          stopCamera();
-          setCameraActive(false);
+            stopCamera();          
+          setCameraActive(false);            
         }}
         className="p-3 cursor-pointer">
           <i className="fa-solid fa-camera text-[27px]"></i>

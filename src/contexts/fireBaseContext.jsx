@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useRef } from "react";
+import React, { createContext, useContext, useRef, useState, useEffect, useCallback } from "react";
 import { initializeApp } from "firebase/app";
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  signOut, // 👈 added import
 } from "firebase/auth";
 import { getDatabase, set, ref, get } from "firebase/database";
 
@@ -25,70 +28,100 @@ const database = getDatabase(app);
 const FirebaseContext = createContext(null);
 
 export function FirebaseProvider({ children }) {
-  const recaptchaVerifierRef = useRef(null);
   const confirmationResultRef = useRef(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // --- Email signup
+  // --- Listen for auth changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // --- Email signup (existing)
   const signupUserWithEmail = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
 
-  // --- Database
+  // --- Email login
+  const loginUserWithEmail = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
+
+
+
+  // --- Database helpers (existing)
   const putData = (key, data) => set(ref(database, key), data);
   const getData = (key) => get(ref(database, key));
 
-  // --- Phone Auth
-  const initRecaptcha = async (containerId = "recaptcha-container") => {
-    if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(
-        containerId,
-        { size: "invisible" },
-        auth
-      );
-      await recaptchaVerifierRef.current.render();
+  // --- Phone Auth (existing)
+  const recaptcha = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+      });
     }
-    return recaptchaVerifierRef.current;
+    return window.recaptchaVerifier;
   };
 
-  const sendOtp = async (phoneNumber, disableAppVerification = false) => {
+  const sendOtp = async (phoneNumber) => {
+    if (!phoneNumber) return console.log("enter valid number");
     try {
-      const appVerifier = await initRecaptcha();
-
-      // For local testing with fake numbers, override verify()
-      if (disableAppVerification && appVerifier.verify) {
-        appVerifier.verify = async () => "fake-recaptcha-response";
-      }
-
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        phoneNumber,
-        appVerifier
-      );
+      const appVerifier = recaptcha();
+      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
       confirmationResultRef.current = confirmationResult;
+      alert("OTP sent");
       return confirmationResult;
     } catch (err) {
-      console.error("Firebase sendOtp error:", err);
+      console.log(err);
+      alert("Failed to send OTP: " + err.message);
+    }
+  };
+
+  const verifyOtp = async (otp, confirmationObjRef) => {
+    try {
+      if (!confirmationObjRef.current) throw new Error("No OTP session.");
+      const verifyRes = await confirmationObjRef.current.confirm(otp);
+      alert("Phone number verified successfully 🎉");
+      return verifyRes;
+    } catch (err) {
+      console.error("Verify OTP Error:", err);
+      alert("Invalid OTP. Try again.");
       throw err;
     }
   };
 
-  const verifyOtp = async (code) => {
-    if (!confirmationResultRef.current)
-      throw new Error("No OTP session found. Please resend.");
-    return confirmationResultRef.current.confirm(code);
+
+  const getUser = () => auth.currentUser;
+
+
+  const logoutUser = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Failed to log out. Please try again.");
+    }
   };
 
   return (
     <FirebaseContext.Provider
       value={{
+        user,
+        loading,
         signupUserWithEmail,
+        loginUserWithEmail,
         putData,
         getData,
         sendOtp,
         verifyOtp,
+        getUser,
+        logoutUser, 
       }}
     >
       {children}
-      <div id="recaptcha-container"></div>
     </FirebaseContext.Provider>
   );
 }

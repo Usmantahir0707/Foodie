@@ -35,10 +35,10 @@ export default function SignUp() {
     <Modal heading={"Signup"}>
       <form
         onSubmit={(e) => handleSubmit(e)}
-        className={`flex flex-col items-center gap-5`}
+        className={`flex flex-col items-center gap-3`}
       >
         <div
-          className={`relative ${error.name ? "mb-2" : "mb-0"} transition-[margin] duration-300`}
+          className={`relative ${error.name ? "mb-4" : "mb-0"} transition-[margin] duration-300`}
         >
           <Input
             startIcon={"user"}
@@ -63,7 +63,7 @@ export default function SignUp() {
         </div>
 
         <div
-          className={`relative ${error.phoneNumber ? "mb-2" : "mb-0"} transition-[margin] duration-300`}
+          className={`relative ${error.phoneNumber ? "mb-4" : "mb-0"} transition-[margin] duration-300`}
         >
           <PhoneInput
             userData={userData}
@@ -80,7 +80,7 @@ export default function SignUp() {
         </div>
 
         <div
-          className={`relative ${error.password ? "mb-2" : "mb-0"} transition-[margin] duration-300`}
+          className={`relative ${error.password ? "mb-4" : "mb-0"} transition-[margin] duration-300`}
         >
           <Input
             startIcon={"lock"}

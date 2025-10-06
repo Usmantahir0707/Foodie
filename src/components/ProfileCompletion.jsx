@@ -1,31 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { initializeApp } from "firebase/app";
-import {
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
 import useLocal from "../hooks/useLocal";
 import Camera from "./Camera";
 import logo from "../assets/logo.png";
 import locationIcon from "../assets/locationIcon.svg";
-
-// --- Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyBvpA4aCrX9jKA-L3IsO1FwAUFl0l8qdek",
-  authDomain: "foodie-deliver.firebaseapp.com",
-  databaseURL: "https://foodie-deliver-default-rtdb.firebaseio.com",
-  projectId: "foodie-deliver",
-  storageBucket: "foodie-deliver.firebasestorage.app",
-  messagingSenderId: "772952462160",
-  appId: "1:772952462160:web:4d7ec6d737ca2a92061255",
-};
-
-// --- Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { useFirebase } from "../contexts/fireBaseContext";
+import useFirebaseStorage from "../hooks/useFirebaseStorage";
+import dataURLtoFile from "../utility/dataURLtoFile";
+import { useNavigate } from "react-router-dom";
+import { EmailAuthProvider, linkWithCredential } from "firebase/auth";
 
 export default function ProfileCompletion() {
+  const { uploadFile, loading: uploadloading, error } = useFirebaseStorage();
+  const firebase = useFirebase();
   const [userDetails, setUserDetails] = useLocal("foodie-user", {});
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -34,9 +20,9 @@ export default function ProfileCompletion() {
   const [imageCaptured, setImageCaptured] = useState(null);
   const [loading, setLoading] = useState(true);
   const inputRefs = useRef([]);
-  const recaptchaVerifierRef = useRef(null);
-  const confirmationResultRef = useRef(null);
-
+  const confirmationObjRef = useRef(null);
+  const navigate = useNavigate()
+ const [otpLoading, setOtpLoading] = useState(false);
   // --- Loader
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200);
@@ -58,52 +44,77 @@ export default function ProfileCompletion() {
       inputRefs.current[index - 1]?.focus();
   };
 
-  // --- Initialize invisible ReCAPTCHA
-  const initRecaptcha = () => {
-    if (!recaptchaVerifierRef.current) {
-      recaptchaVerifierRef.current = new RecaptchaVerifier(
-        "recaptcha-container",
-        { size: "invisible" },
-        auth
-      );
-      recaptchaVerifierRef.current.render();
-    }
-    return recaptchaVerifierRef.current;
-  };
-
-  // --- Send OTP
-  const sendOtpHandler = async () => {
-    try {
-      const appVerifier = initRecaptcha();
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        userDetails.phoneNumber,
-        appVerifier
-      );
-      confirmationResultRef.current = confirmationResult;
+  const handleSendOtp = async () => {
+  setOtpLoading(true);
+  try {
+    const obj = await firebase.sendOtp(userDetails.phoneNumber);
+    if (obj?.verificationId) {
+      confirmationObjRef.current = obj;
       setCodeSent(true);
-      alert("OTP sent! Check your Firebase test number.");
-    } catch (err) {
-      console.error("Send OTP Error:", err);
-      alert(
-        "Failed to send OTP. Make sure the number is a Firebase test number and your domain is authorized."
-      );
     }
-  };
+  } catch (err) {
+    console.error("Failed to send OTP:", err);
+  } finally {
+    setOtpLoading(false);
+  }
+};
 
-  // --- Verify OTP
-  const verifyOtpHandler = async () => {
+ const handleVerifyOtp = async () => {
+  try {
+    setOtpLoading(true);
+    const otpFormatted = otp.join("");
+    const res = await firebase.verifyOtp(otpFormatted, confirmationObjRef);
+    const user = res.user;
+    const uid = user.uid;
+
+    if (!uid) throw new Error("No UID returned from OTP verification");
+
+    //  Link email/password (inside main try)
+    const email = `${user.phoneNumber.replace(/\D/g, "")}@example.com`;
+    const password = userDetails.password
+
     try {
-      const code = otp.join("");
-      if (!confirmationResultRef.current) throw new Error("No OTP session.");
-      await confirmationResultRef.current.confirm(code);
-      alert("Phone verified successfully!");
-      setStep((p) => p + 1);
+      const credential = EmailAuthProvider.credential(email, password);
+      await linkWithCredential(user, credential);
+      console.log("Linked phone user with email:", email);
     } catch (err) {
-      console.error("OTP Verification Error:", err);
-      alert("Invalid OTP. Please try again.");
+      if (err.code === "auth/provider-already-linked") {
+        console.log("Already linked with email provider");
+      } else {
+        console.error("Error linking email:", err);
+      }
     }
-  };
+
+    //  Save user data
+    if (imageCaptured) {
+      const imgFormatted =
+        imageCaptured instanceof File
+          ? imageCaptured
+          : dataURLtoFile(imageCaptured, "profile.png");
+
+      const url = await uploadFile(imgFormatted, `users/${uid}/profile.png`);
+      await firebase.putData(`users/${uid}`, {
+        name: userDetails.name,
+        phoneNumber: userDetails.phoneNumber,
+        profilePic: url,
+      });
+    } else {
+      await firebase.putData(`users/${uid}`, {
+        name: userDetails.name,
+        phoneNumber: userDetails.phoneNumber,
+        profilePic: "",
+      });
+    }
+
+    console.log("User data saved successfully");
+    navigate("/home", { state: { firstLogin: true } });
+    setOtpLoading(false);
+  } catch (err) {
+    console.error("Error in OTP verification or data upload:", err);
+    setOtpLoading(false);
+  }
+};
+
 
   if (loading)
     return (
@@ -158,7 +169,8 @@ export default function ProfileCompletion() {
               Upload your profile picture
             </h2>
             <p className="mt-1 text-gray-600">
-              Your profile picture helps others recognize you and can be changed anytime.
+              Your profile picture helps others recognize you and can be changed
+              anytime.
             </p>
           </div>
 
@@ -273,13 +285,14 @@ export default function ProfileCompletion() {
 
               <div className="flex flex-col items-center gap-4">
                 <button
-                  onClick={verifyOtpHandler}
-                  className="w-[250px] bg-[#e21b70] p-4 text-[20px] text-white active:scale-[98%]"
+                  onClick={handleVerifyOtp}
+                  className={`w-[250px] bg-[#e21b70] p-4 text-[20px] text-white active:scale-[98%]
+                    ${otpLoading ? 'bg-gray-600 pointer-events-none' : 'bg-[#e21b70]'}`}
                 >
-                  Verify
+                  {!otpLoading ? 'Verify' : <>Verify ... <i className="fa-solid fa-spinner loadingSlow scale-[1.1]"></i></>}
                 </button>
                 <button
-                  onClick={sendOtpHandler}
+                  onClick={handleSendOtp}
                   className="text-[16px] text-[#e21b70] underline"
                 >
                   Resend Code
@@ -289,16 +302,15 @@ export default function ProfileCompletion() {
           ) : (
             <div className="flex flex-col items-center gap-4">
               <button
-                onClick={sendOtpHandler}
-                className="w-[250px] bg-[#e21b70] p-4 text-[20px] text-white active:scale-[0.98]"
+                onClick={handleSendOtp}
+                className={`w-[250px]  p-4 text-[20px] text-white active:scale-[0.98] 
+                  ${otpLoading ? 'bg-gray-600 pointer-events-none' : 'bg-[#e21b70]'}`}
               >
-                Send OTP
+               {!otpLoading ? 'Send Otp' : <>Send Otp ... <i className="fa-solid fa-spinner loadingSlow"></i></>}
               </button>
+              <div id="recaptcha-container"></div>
             </div>
           )}
-
-          {/* ReCAPTCHA container */}
-          <div id="recaptcha-container"></div>
         </div>
       )}
     </div>

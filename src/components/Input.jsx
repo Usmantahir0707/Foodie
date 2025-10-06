@@ -15,6 +15,7 @@ export default function Input({
   crossHandler,
   crossRef,
   inputMode,
+  maxLength,
 }) {
   return (
     <div 
@@ -42,6 +43,7 @@ export default function Input({
         {...(onChange ? { onChange } : {})}
         {...(onFocus ? { onFocus } : {})}
         {...(inputMode ? { inputMode } : {})}
+        {...(maxLength ? { maxLength } : {})}
         {...(onBlur ? { onBlur } : {})}
         {...(onKeyDown ? { onKeyDown } : {})}
         type={type || 'text'}

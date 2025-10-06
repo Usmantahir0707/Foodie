@@ -1,5 +1,4 @@
-import CameraDemo from "./CameraDemo"
-import OTPComponent from '../components/OtpComponent';
+
 
 
 export default function pickUp() {
@@ -7,7 +6,7 @@ export default function pickUp() {
      <>
       
         <div>
-          <OTPComponent/>
+         
         </div>
         </>
   )

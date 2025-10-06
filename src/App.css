@@ -63,3 +63,6 @@ button{
 .loading {
   animation: loading 0.6s ease-in-out infinite;
 }
+.loadingSlow{
+  animation: loading 1.2s ease-in-out infinite;
+}
