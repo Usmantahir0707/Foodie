@@ -6,7 +6,7 @@ export default function pickUp() {
      <>
       
         <div>
-         
+         asd
         </div>
         </>
   )
