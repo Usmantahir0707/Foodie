@@ -1,5 +1,13 @@
-import React, { createContext, useContext, useRef, useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { initializeApp } from "firebase/app";
+import { getDatabase, set, ref, get, update } from "firebase/database";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -7,18 +15,18 @@ import {
   onAuthStateChanged,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  signOut, // 👈 added import
+  signOut,
+  updatePassword,
 } from "firebase/auth";
-import { getDatabase, set, ref, get } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvpA4aCrX9jKA-L3IsO1FwAUFl0l8qdek",
-  authDomain: "foodie-deliver.firebaseapp.com",
-  databaseURL: "https://foodie-deliver-default-rtdb.firebaseio.com",
-  projectId: "foodie-deliver",
-  storageBucket: "foodie-deliver.firebasestorage.app",
-  messagingSenderId: "772952462160",
-  appId: "1:772952462160:web:4d7ec6d737ca2a92061255",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
@@ -41,7 +49,7 @@ export function FirebaseProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // --- Email signup (existing)
+  // --- Email signup
   const signupUserWithEmail = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
 
@@ -49,18 +57,21 @@ export function FirebaseProvider({ children }) {
   const loginUserWithEmail = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-
-
-  // --- Database helpers (existing)
+  // --- Database helpers
   const putData = (key, data) => set(ref(database, key), data);
   const getData = (key) => get(ref(database, key));
+  const updateData = (path, data) => update(ref(database, path), data);
 
-  // --- Phone Auth (existing)
+  // --- Phone Auth
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-      });
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+        },
+      );
     }
     return window.recaptchaVerifier;
   };
@@ -69,13 +80,18 @@ export function FirebaseProvider({ children }) {
     if (!phoneNumber) return console.log("enter valid number");
     try {
       const appVerifier = recaptcha();
-      const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      const confirmationResult = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        appVerifier,
+      );
       confirmationResultRef.current = confirmationResult;
       alert("OTP sent");
       return confirmationResult;
     } catch (err) {
       console.log(err);
       alert("Failed to send OTP: " + err.message);
+      throw err;
     }
   };
 
@@ -92,9 +108,7 @@ export function FirebaseProvider({ children }) {
     }
   };
 
-
   const getUser = () => auth.currentUser;
-
 
   const logoutUser = async () => {
     try {
@@ -103,6 +117,19 @@ export function FirebaseProvider({ children }) {
     } catch (err) {
       console.error("Logout error:", err);
       alert("Failed to log out. Please try again.");
+    }
+  };
+
+  // --- Update Password
+  const updateUserPassword = async (newPassword) => {
+    if (!auth.currentUser) throw new Error("No user is currently signed in.");
+    try {
+      await updatePassword(auth.currentUser, newPassword);
+      alert("Password updated successfully!");
+    } catch (err) {
+      console.error("Error updating password:", err);
+      alert("Failed to update password: " + err.message);
+      throw err;
     }
   };
 
@@ -118,7 +145,9 @@ export function FirebaseProvider({ children }) {
         sendOtp,
         verifyOtp,
         getUser,
-        logoutUser, 
+        logoutUser,
+        updateUserPassword,
+        updateData,
       }}
     >
       {children}

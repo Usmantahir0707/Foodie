@@ -3,13 +3,16 @@ import Input from "./Input";
 import vector from "../assets/vector.png";
 import google from "../assets/google.png";
 import PhoneInput from "./PhoneInput";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFirebase } from "../contexts/fireBaseContext";
 import { useNavigate } from "react-router-dom";
+import UpdatePassword from "./UpdatePassword";
+
 
 export default function SignIn() {
   const navigate = useNavigate()
   const firebase = useFirebase()
+   const [changePassword, setChangePassword] = useState(false);
   const [error, setError] = useState({});
   const [userData, setUserData] = useState({
     phoneNumber: "",
@@ -58,6 +61,9 @@ export default function SignIn() {
 
   return (
     <Modal heading={"Login"}>
+      {
+          changePassword ? <UpdatePassword setChangePassword={setChangePassword}/> : ''
+        }
       <form onSubmit={(e)=> handleSubmit(e)} className="flex flex-col justify-center gap-3">
         <div className={`relative ${error.phoneNumber ? 'mb-6' : ''} transition-[margin] duration-300`}>
           <PhoneInput
@@ -94,10 +100,13 @@ export default function SignIn() {
       }
         </div>
         {
-          error.password ? '' : <span className="absolute bottom-[-27px] left-2 text-[14px]">
-          forgot password?
+          error.password ? '' : 
+          <span onClick={()=> setChangePassword(true)}
+           className="absolute bottom-[-27px] left-2 text-[14px]">
+          forgot password? 
         </span>
         }
+        
         
       </div>
 

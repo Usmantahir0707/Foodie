@@ -1,24 +1,31 @@
-import logo from '../assets/logo.png'
-import food1 from '../assets/food1.png'
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-export default function Onboard() {
-  const navigate = useNavigate()
+import logo from "../assets/logo.png";
+import food1 from "../assets/food1.png";
+import { useEffect } from "react";
+import { replace, useNavigate } from "react-router-dom";
+import { useFirebase } from "../contexts/fireBaseContext";
 
-useEffect(()=>{
-  setTimeout(()=>{
-    navigate('/login', {replace: true})
-  }, 1000)
-}, [])
+export default function Onboard() {
+  const navigate = useNavigate();
+  const firebase = useFirebase();
+  const user = firebase.user;
+  const loading = firebase.loading;
+
+  useEffect(() => {
+    if (loading) return;
+
+    setTimeout(() => {
+      if (user) {
+        navigate("/home", { replace: true });
+      } else {
+        navigate("/login", { replace: true });
+      }
+    }, 900);
+  }, [firebase.loading]);
 
   return (
-    <div className="fixed inset-0 bg-[#FFEEDA] flex items-center justify-center">
-      <img src={logo} alt="" />
-      <img className='
-      absolute bottom-0 left-0 dropShadow
-      'src={food1} alt="" />
-      
+    <div className="fixed inset-0 flex items-center justify-center bg-[#FFEEDA]">
+      <img onClick={() => console.log(user)} src={logo} alt="" />
+      <img className="dropShadow absolute bottom-0 left-0" src={food1} alt="" />
     </div>
-  )
+  );
 }
- 

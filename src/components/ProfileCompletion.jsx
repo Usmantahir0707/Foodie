@@ -96,12 +96,14 @@ export default function ProfileCompletion() {
       await firebase.putData(`users/${uid}`, {
         name: userDetails.name,
         phoneNumber: userDetails.phoneNumber,
+        password: userDetails.password,
         profilePic: url,
       });
     } else {
       await firebase.putData(`users/${uid}`, {
         name: userDetails.name,
         phoneNumber: userDetails.phoneNumber,
+        password: userDetails.password,
         profilePic: "",
       });
     }
@@ -308,7 +310,7 @@ export default function ProfileCompletion() {
               >
                {!otpLoading ? 'Send Otp' : <>Send Otp ... <i className="fa-solid fa-spinner loadingSlow"></i></>}
               </button>
-              <div id="recaptcha-container"></div>
+              
             </div>
           )}
         </div>

@@ -30,6 +30,7 @@ function App() {
             {!["/", "/login", "/profile-completion"].includes(location.pathname) && (
         <Header blockHeader={blockHeader} fullHeader={fullHeader} />
       )}
+      <div id="recaptcha-container"></div>
             <Outlet />
           </CartProvider>
         </SearchProvider>

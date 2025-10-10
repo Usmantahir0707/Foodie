@@ -4,8 +4,11 @@ import { useState } from "react";
 import SignUp from "./SignUp";
 import SignIn from "./SignIn";
 
+
 export default function Login() {
   const [register, setRegister] = useState(false);
+ 
+  
   return (
     <div className="flex flex-col items-center justify-center gap-55 md:gap-45">
       <img className="w-screen md:w-170 md:h-90" src={Rectangle} alt="" />
