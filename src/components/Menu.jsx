@@ -77,7 +77,7 @@ export default function Menu({
                       />
                     </div>
                     <button
-                      className={`ease absolute flex h-[42px] cursor-pointer items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[92px] gap-0 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[42px] rounded-[50%] bg-gray-500 pb-1.5"}`}
+                      className={`ease absolute flex h-[42px] cursor-pointer items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[42px] rounded-[50%] bg-gray-500"}`}
                     >
                       {cartData.find((f) => f.title === item.title) && (
                         <span
