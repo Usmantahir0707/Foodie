@@ -62,37 +62,24 @@ export function FirebaseProvider({ children }) {
   const getData = (key) => get(ref(database, key));
   const updateData = (path, data) => update(ref(database, path), data);
 
-  // --- Phone Auth with your own reCAPTCHA v2 key
+  // --- Phone Auth (OLD working version)
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
-      const siteKey = "6LfjHvArAAAAAJteLdnRVTpHldSVEQbmj4HThYS9"; // <-- your reCAPTCHA v2 site key
+      const siteKey = "6LfjHvArAAAAAJteLdnRVTpHldSVEQbmj4HThYS9"; // <-- your reCAPTCHA v2 key
 
       window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
         "recaptcha-container",
         {
-          size: "invisible", // badge is hidden
-          callback: (token) => {
-            console.log("reCAPTCHA solved ✅ Token:", token);
-          },
-          "expired-callback": () => {
-            console.warn("reCAPTCHA expired — regenerating...");
-            window.recaptchaVerifier = null;
-          },
-        },
-        auth
+          size: "invisible",
+        }
       );
-
-      // Optional: render immediately to get widget ID
-      window.recaptchaVerifier.render().then((widgetId) => {
-        window.recaptchaVerifier.widgetId = widgetId;
-        grecaptcha.reset(widgetId); // reset if needed
-      });
     }
     return window.recaptchaVerifier;
   };
 
   const sendOtp = async (phoneNumber) => {
-    if (!phoneNumber) return console.log("Enter a valid number");
+    if (!phoneNumber) return console.log("Enter valid number");
     try {
       const appVerifier = recaptcha();
       const confirmationResult = await signInWithPhoneNumber(
@@ -103,7 +90,7 @@ export function FirebaseProvider({ children }) {
       confirmationResultRef.current = confirmationResult;
       return confirmationResult;
     } catch (err) {
-      console.error("Failed to send OTP:", err);
+      console.log(err);
       alert("Failed to send OTP: " + err.message);
       throw err;
     }
