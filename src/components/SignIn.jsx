@@ -7,9 +7,11 @@ import { useState } from "react";
 import { useFirebase } from "../contexts/fireBaseContext";
 import { useNavigate } from "react-router-dom";
 import UpdatePassword from "./UpdatePassword";
+import LoadingDots from "./LoadingDots";
 
 
 export default function SignIn() {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
   const firebase = useFirebase()
    const [changePassword, setChangePassword] = useState(false);
@@ -45,15 +47,25 @@ export default function SignIn() {
     if(Object.keys(errorObj).length > 0) return
 
     const loginUser = async ()=>{
+      setLoading(true)
       const email = `${userData.phoneNumber.slice(1)}@example.com`;
       const password = userData.password;
      
       try{
         const userLogin = await firebase.loginUserWithEmail(email, password)
+        setLoading(false)
         navigate('/home')
       }
       catch(e){
         console.log(e)
+        setError((p)=> ({...p, failed: e.message}))
+        setLoading(false)
+        setTimeout(() => {
+          setError((p)=>{
+            const {failed, ...rest} = p;
+            return rest
+          })
+        }, 1000);
       }
     }
     loginUser()
@@ -64,15 +76,18 @@ export default function SignIn() {
       {
           changePassword ? <UpdatePassword setChangePassword={setChangePassword}/> : ''
         }
-      <form onSubmit={(e)=> handleSubmit(e)} className="flex flex-col justify-center gap-3">
+      <form onSubmit={(e)=> handleSubmit(e)} className="flex flex-col justify-center gap-3 
+      scale-[clamp(0.8,,1)]
+">
         <div className={`relative ${error.phoneNumber ? 'mb-6' : ''} transition-[margin] duration-300`}>
           <PhoneInput
         userData={userData}
         setUserData={setUserData}
         setError={setError}
+        conCss={''}
       />
       {!error.phoneNumber ? '' : 
-      <div className="absolute text-[red]">{error.phoneNumber}</div>
+      <div className="absolute text-[red] text-[14px]">{error.phoneNumber}</div>
       }
         </div>
         
@@ -84,35 +99,45 @@ export default function SignIn() {
           value={userData.password}
           tail=" w-full h-[50px]"
           onChange={(e) => {
-            setUserData((p) => ({ ...p, password: e.target.value }))
-            setError((p)=>{
+             setUserData((p) => ({ ...p, password: e.target.value }))
+             setError((p)=>{
               const {password, ...rest} = p
               return rest
             })
           }}
+          onPaste={(e) => {
+              e.preventDefault() 
+              const text = e.clipboardData.getData("text").trim();
+              setUserData((p) => ({ ...p, password: text }));
+            }}
           startIcon={"lock"}
           maxLength={14}
           placeholder={"password"}
           endIcon={"eye"}
         />
         {!error.password ? '' : 
-      <div className="absolute text-[red]">{error.password}</div>
+      <div className="absolute text-[red] text-[14px]">{error.password}</div>
       }
         </div>
-        {
+        
+        <div className="flex flex-col">
+          {
           error.password ? '' : 
           <span onClick={()=> setChangePassword(true)}
-           className="absolute bottom-[-27px] left-2 text-[14px]">
+           className="absolute cursor-pointer bottom-[-27px] left-2 text-[14px]">
           forgot password? 
         </span>
         }
-        
+        {
+          error.failed ? <span>{error.failed}</span> : ''
+        }
+        </div>
         
       </div>
 
-      <button className={` h-[45px] w-[255px] bg-[#EC2578] text-white active:scale-[97%] ${
-        error.password ? 'mt-6' : 'mt-10'} transition-[margin] duration-300`}>
-        Login
+      <button className={`h-[45px] w-[255px] bg-[#EC2578] text-white active:scale-[97%] ${
+        error.password ? 'mt-6' : 'mt-10'} ${loading && 'pointer-events-none bg-gray-500'} transition-[margin] duration-300`}>
+        {loading ? <LoadingDots text={'Please wait'}/> : 'Log in'}
       </button>
       </form>
       

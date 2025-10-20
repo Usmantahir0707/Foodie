@@ -3,11 +3,12 @@ import lock from "../assets/lock2.png";
 import green from "../assets/green.png";
 import PhoneInput from "./PhoneInput";
 import { useFirebase } from "../contexts/fireBaseContext";
-import { useNavigate } from "react-router-dom";
+import LoadingDots from "./LoadingDots";
 
 export default function UpdatePassword({ setChangePassword }) {
   const [step, setStep] = useState(1);
   const [password, setPassword] = useState(null);
+  const [loader, setLoader] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [change, setChange] = useState(false);
   const [method, setMethod] = useState("");
@@ -21,8 +22,9 @@ export default function UpdatePassword({ setChangePassword }) {
   const verifyBtnRef = useRef();
   const confirmationObjRef = useRef();
   const firebase = useFirebase();
-  const navigate = useNavigate();
-  const uidRef = useRef(); 
+  const uidRef = useRef();
+  const updateButtonRef = useRef();
+  const sendBtnRef = useRef();
 
   useEffect(() => {
     if (error.sending) {
@@ -33,7 +35,6 @@ export default function UpdatePassword({ setChangePassword }) {
         });
       }, 3000);
     }
-  
   }, [error]);
 
   const copied = () => {
@@ -69,24 +70,28 @@ export default function UpdatePassword({ setChangePassword }) {
   };
 
   const handleSendOtp = async () => {
+    setLoader(true);
     try {
       const obj = await firebase.sendOtp(userData.phoneNumber);
       if (obj?.verificationId) {
         confirmationObjRef.current = obj;
         setStep(3);
       }
+      setLoader(false);
     } catch (e) {
       setError((p) => ({ ...p, sending: e.message }));
+      setLoader(false);
     }
   };
 
   const handleVerifyOtp = async () => {
+    setLoader(true);
     const formattedOtp = otp.join("");
     try {
       const res = await firebase.verifyOtp(formattedOtp, confirmationObjRef);
       const user = res.user;
-      const uid = user.uid
-       uidRef.current = uid;
+      const uid = user.uid;
+      uidRef.current = uid;
 
       const snap = await firebase.getData(`users/${uid}`);
       const data = snap.val();
@@ -98,8 +103,10 @@ export default function UpdatePassword({ setChangePassword }) {
       if (method === "new") {
         setChange(true);
       }
+      setLoader(false);
     } catch (e) {
       console.log(e);
+      setLoader(false);
     }
   };
 
@@ -122,27 +129,31 @@ export default function UpdatePassword({ setChangePassword }) {
     console.log(errorObj);
     if (Object.keys(errorObj).length !== 0) return;
 
+    setLoader(true);
     firebase
       .updateUserPassword(newPassword)
       .then((res) => {
         firebase.updateData(`users/${uidRef.current}`, {
-          password: newPassword
-        })
+          password: newPassword,
+        });
         firebase.logoutUser();
         setSummary(true);
-        
+        setLoader(false);
       })
-      .catch((err) => setError((p) => ({ ...p, try: err.message })));
+      .catch((err) => {
+        setError((p) => ({ ...p, try: err.message }));
+        setLoader(false);
+      });
   };
 
   return (
     <>
       <div>
-        <div className="fixed inset-0 z-10 flex h-full w-full flex-col bg-gray-100 p-6">
+        <div className="fixed inset-0 z-10 flex h-full w-full flex-col bg-gray-100 p-2 px-4">
           <div>
             <i
               onClick={() => window.location.reload()}
-              className="fa-solid fa-arrow-left p-4 text-[20px]"
+              className="fa-solid fa-arrow-left cursor-pointer p-2 text-[15px]"
             ></i>
           </div>
 
@@ -155,25 +166,27 @@ export default function UpdatePassword({ setChangePassword }) {
               )}
               <img
                 onLoad={() => setImgLoading(false)}
-                className="w-[60%]"
+                className="w-[100px]"
                 src={lock}
                 alt=""
               />
             </div>
-            <h2 className="text-center text-[30px] font-[600] text-[#e21b70]">
+            <h2 className="text-center font-[600] text-[#e21b70] text-[20px]">
               Password Recovery
             </h2>
-            <p className="text-center text-[18px]">Step ({step}/3)</p>
+            <p className="text-center text-[14px]">
+              Step ({step}/3)
+            </p>
           </div>
 
           {/* Step 1 */}
           {step === 1 && (
             <div>
-              <h3 className="mt-10 self-center text-[26px] font-[400]">
+              <h3 className="self-center font-[400] mt-4 text-[19px]">
                 Choose recovery method
               </h3>
               <div className="mt-3 flex flex-col gap-1">
-                <label className="text-[18px]">
+                <label className="text-[14px]">
                   <input
                     className="mr-2 accent-pink-500"
                     type="radio"
@@ -184,7 +197,7 @@ export default function UpdatePassword({ setChangePassword }) {
                   />
                   Recover my current password
                 </label>
-                <label className="text-[18px]">
+                <label className="text-[14px]">
                   <input
                     className="mr-2 accent-pink-500"
                     type="radio"
@@ -199,10 +212,10 @@ export default function UpdatePassword({ setChangePassword }) {
               <div className="flex justify-center">
                 <button
                   onClick={(e) => {
-                    e.stopPropagation()
-                    setStep(2)
+                    e.stopPropagation();
+                    setStep(2);
                   }}
-                  className={`mt-13 h-[64px] w-[170px] rounded-md text-[18px] text-white ${
+                  className={` h-[48px] w-[127px] rounded-md text-[16px] text-white mt-10  ${
                     !method ? "pointer-events-none bg-gray-500" : "bg-[#e21b70]"
                   } `}
                 >
@@ -214,55 +227,59 @@ export default function UpdatePassword({ setChangePassword }) {
 
           {/* Step 2 */}
           {step === 2 && (
-            <div className="mt-7 flex flex-col items-center gap-6">
-              <h2 className="self-center text-[26px] font-[400]">
+            <div className=" flex flex-col items-center mt-4 gap-4">
+              <h2 className="self-center font-[400] text-[18px]">
                 Enter your Number
               </h2>
-              <div className="scale-[120%] shadow-[0px_0px_5px_rgba(0,0,0,0.2)]">
+              <div className="shadow-[0px_0px_5px_rgba(0,0,0,0.2)] scale-[90%]">
                 <PhoneInput
                   userData={userData}
                   setUserData={setUserData}
                   setError={setError}
+                  enter={() => sendBtnRef.current.click()}
                 />
               </div>
 
-              {error.sending && <p className="text-red-600">{error.sending}</p>}
+              {error.sending && (
+                <p className="text-red-600 text-[12px]">{error.sending}</p>
+              )}
 
               <button
-                onClick={(e)=>{
-                  handleSendOtp()
+                ref={sendBtnRef}
+                onClick={(e) => {
+                  handleSendOtp();
                 }}
-                className={`mt-6 h-[64px] w-[170px] rounded-md text-[18px] text-white ${
+                className={` h-[48px] w-[127px] rounded-md text-[16px] text-white mt-3 ${
                   userData.phoneNumber.length <
                   userData.numberLength + userData.codeLength
                     ? "pointer-events-none bg-gray-500"
                     : "bg-[#e21b70]"
-                }`}
+                } ${loader && "pointer-events-none bg-gray-500"}`}
               >
-                Send Otp
+                {loader ? <LoadingDots text={"Sending"} /> : "Send Otp"}
               </button>
-              
             </div>
           )}
 
           {/* Step 3 */}
+          {/* Set new password */}
           {change ? (
-            <div className="mt-7 flex flex-col items-center gap-8">
-              <h2 className="text-[23px]">Set New Password</h2>
+            <div className="mt-7 flex flex-col items-center gap-8 md:gap-4">
+              <h2 className="text-[23px] md:text-[18px]">Set New Password</h2>
 
               {/* Summary on Completion */}
               {!summary ? (
                 ""
               ) : (
-                <div className="fixed inset-0 bg-gray-700/30 p-4 backdrop-blur-[3px]">
+                <div className="fixed inset-0 z-10 bg-gray-700/30 p-4 backdrop-blur-[3px]">
                   <div
                     onClick={() => window.location.reload()}
-                    className="absolute top-2 right-2 p-2"
+                    className="absolute top-2 right-2 cursor-pointer p-2"
                   >
                     <i className="fa-solid fa-circle-xmark text-[34px] text-gray-700"></i>
                   </div>
 
-                  <div className="mt-[50%] flex h-[300px] w-full flex-col items-center gap-7 rounded-2xl bg-gray-700 p-4 text-white">
+                  <div className="mt-[50%] flex h-[300px] w-full flex-col items-center gap-7 rounded-2xl bg-gray-700 p-4 text-white md:mt-[20%]">
                     <div className="flex flex-col items-center">
                       <div className="flex h-[40px] items-center gap-1">
                         <img
@@ -282,7 +299,7 @@ export default function UpdatePassword({ setChangePassword }) {
                         navigator.clipboard.writeText(newPassword);
                         copied();
                       }}
-                      className="flex h-[50px] w-[75%] items-center justify-between rounded-2xl bg-gray-600 px-5"
+                      className="flex h-[50px] w-[75%] cursor-pointer items-center justify-between rounded-2xl bg-gray-600 px-5"
                     >
                       <p>{newPassword ? newPassword : "12345678"}</p>
 
@@ -293,7 +310,7 @@ export default function UpdatePassword({ setChangePassword }) {
 
                     <button
                       onClick={() => window.location.reload()}
-                      className="flex h-[50px] w-[100px] items-center justify-center rounded-md bg-green-600 p-2 text-[18px]"
+                      className="flex h-[50px] md:scale-[80%] w-[100px] items-center justify-center rounded-md bg-green-600 p-2 text-[18px]"
                     >
                       Ok
                     </button>
@@ -301,12 +318,16 @@ export default function UpdatePassword({ setChangePassword }) {
                 </div>
               )}
 
-              <div className="flex w-[210px] flex-col items-center gap-4">
+              <div className="flex w-[210px] flex-col items-center gap-4 md:scale-[80%]">
                 <input
-                  className="h-[65px] w-full rounded-2xl bg-gray-300 px-8 py-2"
+                  className="h-[65px] w-full rounded-2xl bg-gray-300 px-8 py-2 md:h-[50px] md:py-1"
                   type="text"
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && updateButtonRef.current.click()
+                  }
                   placeholder="Enter new password"
                   value={newPassword}
+                  spellcheck="false"
                   onChange={(e) => {
                     setNewPassword(e.target.value);
                     setError((p) => {
@@ -316,7 +337,7 @@ export default function UpdatePassword({ setChangePassword }) {
                   }}
                 />
                 {error.password ? (
-                  <p className="bg-amber-200 p-0 text-red-600">
+                  <p className="bg-amber-200 p-0 text-red-600 md:text-[14px]">
                     {error.password}
                   </p>
                 ) : (
@@ -330,24 +351,30 @@ export default function UpdatePassword({ setChangePassword }) {
               </div>
 
               <button
+                ref={updateButtonRef}
                 onClick={UpdateNewPassword}
-                className="mt-3 h-[57px] w-[155px] bg-[#e21b70] text-[18px] text-white active:scale-[98%]"
+                className="mt-3 h-[57px] w-[155px] bg-[#e21b70] text-[18px] text-white active:scale-[98%] md:mt-0 md:scale-[70%]"
               >
                 Update
               </button>
             </div>
           ) : (
+            // Verify OTP
             step === 3 &&
             (!password ? (
               <div className="mt-4 flex flex-col items-center">
                 {/* heading */}
                 <div className="flex flex-col items-center">
-                  <h2 className="text-[26px] font-[400]">Confirm its you</h2>
-                  <p>Enter 6 digit code sent to {userData.phoneNumber}</p>
+                  <h2 className="text-[26px] font-[400] md:text-[18px]">
+                    Confirm its you
+                  </h2>
+                  <p className="md:text-[12px]">
+                    Enter 6 digit code sent to {userData.phoneNumber}
+                  </p>
                 </div>
 
                 {/* boxes */}
-                <div className="mt-4 flex gap-3 p-2">
+                <div className="mt-4 flex gap-3 p-2 md:gap-0">
                   {otp.map((digit, i) => (
                     <input
                       key={i}
@@ -356,7 +383,7 @@ export default function UpdatePassword({ setChangePassword }) {
                       value={digit}
                       onChange={(e) => handleChange(e, i)}
                       ref={(el) => (inputRefs.current[i] = el)}
-                      className="h-[50px] w-[45px] rounded-2xl bg-gray-300 text-center text-[20px] shadow-[0px_0px_5px_rgba(0,0,0,0.5)]"
+                      className="h-[50px] w-[45px] rounded-2xl bg-gray-300 text-center text-[20px] shadow-[0px_0px_5px_rgba(0,0,0,0.5)] md:scale-[75%]"
                     />
                   ))}
                 </div>
@@ -365,25 +392,27 @@ export default function UpdatePassword({ setChangePassword }) {
                 <button
                   onClick={handleVerifyOtp}
                   ref={verifyBtnRef}
-                  className="mt-8 h-[64px] w-[170px] rounded-md bg-[#e21b70] text-[18px] text-white"
+                  className={`mt-8 h-[64px] w-[170px] rounded-md bg-[#e21b70] text-[18px] text-white md:mt-2 md:scale-[70%] ${loader && "pointer-events-none bg-gray-500"}`}
                 >
-                  Verify Otp
+                  {loader ? <LoadingDots text={"Verifying"} /> : "Verify Otp"}
                 </button>
               </div>
             ) : (
+              //  Current Password
               <div className="mt-7 flex flex-col items-center gap-3 text-center text-[20px]">
                 <p className="self-center">Your Current Password</p>
+
                 <span
                   onClick={() => {
                     navigator.clipboard.writeText(password);
                     copied();
                   }}
-                  className="flex h-[70px] w-[220px] items-center justify-center gap-2 rounded-md bg-gray-200 shadow active:scale-[98%]"
+                  className="flex h-[70px] w-[220px] md:scale-[90%] cursor-pointer items-center justify-center gap-2 rounded-md bg-gray-200 shadow active:scale-[98%]"
                 >
-                  <span>
+                  <span className="md:text-[16px]">
                     {password}{" "}
                     {copy ? (
-                      '✅'
+                      "✅"
                     ) : (
                       <i className="fa-solid fa-copy text-[16px] text-[#e21b70]"></i>
                     )}

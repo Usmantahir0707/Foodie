@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function PhoneInput({ userData, setUserData, setError }) {
+export default function PhoneInput({ userData, setUserData, setError, enter, conCss, inCss}) {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [placeholder, setPlaceholder] = useState("Enter Phone Number");
@@ -96,7 +96,7 @@ export default function PhoneInput({ userData, setUserData, setError }) {
   return (
     <div
       role="container"
-      className="flex h-[50px] max-w-[270px] items-center gap-2 bg-[#EDEDED] p-2 text-[14px]"
+      className={`flex h-[50px] max-w-[270px] items-center gap-2 bg-[#EDEDED] p-2 text-[14px] ${conCss ? conCss : ''}`}
     >
       <div
         onClick={() => {
@@ -166,12 +166,13 @@ export default function PhoneInput({ userData, setUserData, setError }) {
 
       <span>{dialCode}</span>
       <input
-        className="h-[50px] max-w-[250px] flex-1 bg-[#EDEDED] focus:ring-0 focus:outline-none"
+        className={`h-[50px] max-w-[250px] flex-1 bg-[#EDEDED] focus:ring-0 focus:outline-none ${inCss ? inCss : ''}`}
         type="tel"
         maxLength={selectedCountry?.example?.length || 20}
         inputMode="numeric"
         placeholder={placeholder}
         value={formattedValue}
+        onKeyDown={(e)=> e.key === 'Enter' && enter ? enter() : ''}
         onChange={(e) => handleChange(e)}
       />
     </div>

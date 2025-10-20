@@ -11,6 +11,7 @@ export default function Input({
   onFocus,
   onBlur,
   onKeyDown,
+  onPaste,
   type,
   crossHandler,
   crossRef,
@@ -45,6 +46,7 @@ export default function Input({
         {...(inputMode ? { inputMode } : {})}
         {...(maxLength ? { maxLength } : {})}
         {...(onBlur ? { onBlur } : {})}
+        {...(onPaste ? { onPaste } : {})}
         {...(onKeyDown ? { onKeyDown } : {})}
         type={type || 'text'}
         placeholder={placeholder}

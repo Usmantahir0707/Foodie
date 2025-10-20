@@ -4,7 +4,6 @@ import {
   useRef,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, set, ref, get, update } from "firebase/database";
@@ -19,6 +18,7 @@ import {
   updatePassword,
 } from "firebase/auth";
 
+// --- Firebase config
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -29,10 +29,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// --- Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
+// --- Create context
 const FirebaseContext = createContext(null);
 
 export function FirebaseProvider({ children }) {
@@ -49,11 +51,9 @@ export function FirebaseProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // --- Email signup
+  // --- Email signup/login
   const signupUserWithEmail = (email, password) =>
     createUserWithEmailAndPassword(auth, email, password);
-
-  // --- Email login
   const loginUserWithEmail = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
@@ -62,34 +62,48 @@ export function FirebaseProvider({ children }) {
   const getData = (key) => get(ref(database, key));
   const updateData = (path, data) => update(ref(database, path), data);
 
-  // --- Phone Auth
+  // --- Phone Auth with your own reCAPTCHA v2 key
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
+      const siteKey = "6LfjHvArAAAAAJteLdnRVTpHldSVEQbmj4HThYS9"; // <-- your reCAPTCHA v2 site key
+
       window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
         "recaptcha-container",
         {
-          size: "invisible",
+          size: "invisible", // badge is hidden
+          callback: (token) => {
+            console.log("reCAPTCHA solved ✅ Token:", token);
+          },
+          "expired-callback": () => {
+            console.warn("reCAPTCHA expired — regenerating...");
+            window.recaptchaVerifier = null;
+          },
         },
+        auth
       );
+
+      // Optional: render immediately to get widget ID
+      window.recaptchaVerifier.render().then((widgetId) => {
+        window.recaptchaVerifier.widgetId = widgetId;
+        grecaptcha.reset(widgetId); // reset if needed
+      });
     }
     return window.recaptchaVerifier;
   };
 
   const sendOtp = async (phoneNumber) => {
-    if (!phoneNumber) return console.log("enter valid number");
+    if (!phoneNumber) return console.log("Enter a valid number");
     try {
       const appVerifier = recaptcha();
       const confirmationResult = await signInWithPhoneNumber(
         auth,
         phoneNumber,
-        appVerifier,
+        appVerifier
       );
       confirmationResultRef.current = confirmationResult;
-      alert("OTP sent");
       return confirmationResult;
     } catch (err) {
-      console.log(err);
+      console.error("Failed to send OTP:", err);
       alert("Failed to send OTP: " + err.message);
       throw err;
     }
@@ -99,7 +113,6 @@ export function FirebaseProvider({ children }) {
     try {
       if (!confirmationObjRef.current) throw new Error("No OTP session.");
       const verifyRes = await confirmationObjRef.current.confirm(otp);
-      alert("Phone number verified successfully 🎉");
       return verifyRes;
     } catch (err) {
       console.error("Verify OTP Error:", err);
@@ -108,8 +121,10 @@ export function FirebaseProvider({ children }) {
     }
   };
 
+  // --- Get current user
   const getUser = () => auth.currentUser;
 
+  // --- Logout
   const logoutUser = async () => {
     try {
       await signOut(auth);
@@ -120,7 +135,7 @@ export function FirebaseProvider({ children }) {
     }
   };
 
-  // --- Update Password
+  // --- Update password
   const updateUserPassword = async (newPassword) => {
     if (!auth.currentUser) throw new Error("No user is currently signed in.");
     try {
