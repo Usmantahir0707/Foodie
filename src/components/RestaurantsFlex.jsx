@@ -17,7 +17,7 @@ export default function RestaurantsFlex() {
             role="title + rating container"
             className="flex justify-between px-[12px]"
           >
-            <h1 className="text-[1.3rem] leading-normal font-[600]">
+            <h1 className="text-[17px] leading-normal font-[500]">
               {x.title}
             </h1>
             <div className="flex items-center justify-between gap-2">

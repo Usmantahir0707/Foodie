@@ -1,6 +1,6 @@
 export default function LoadingDots({text}) {
   return (
-    <div className="flex items-center justify-center text-lg font-medium">
+    <div className="flex items-center justify-center text-[14px] font-medium">
       {text}
       <span className="ml-1 flex">
         <span className="opacity-0 animate-[blink_1.5s_infinite] [animation-delay:0s]">.</span>

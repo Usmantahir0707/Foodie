@@ -82,19 +82,20 @@ const inputRefs = useRef([]);
             : dataURLtoFile(imageCaptured, "profile.png");
 
         const url = await uploadFile(imgFormatted, `users/${uid}/profile.png`);
+
         await firebase.putData(`users/${uid}`, {
-          name: userDetails.name,
-          phoneNumber: userDetails.phoneNumber,
-          password: userDetails.password,
-          address: userAddress.fullAddress,
-          profilePic: url,
+          name: userDetails.name || '',
+          phoneNumber: userDetails.phoneNumber || '',
+          password: userDetails.password || '',
+          address: userAddress.fullAddress || '',
+          profilePic: url || '',
         });
       } else {
         await firebase.putData(`users/${uid}`, {
-          name: userDetails.name,
-          phoneNumber: userDetails.phoneNumber,
-          password: userDetails.password,
-          address: userAddress.fullAddress,
+          name: userDetails.name || '',
+          phoneNumber: userDetails.phoneNumber || '',
+          password: userDetails.password || '',
+          address: userAddress.fullAddress || '',
           profilePic: "",
         });
       }

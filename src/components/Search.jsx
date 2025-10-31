@@ -5,7 +5,7 @@ import Input from "./Input";
 import { useSearch } from "../contexts/searchContext";
 import { useNavigate } from "react-router-dom";
 
-export default function Search() {
+export default function Search({setShowFilters}) {
   const {
     searchInput,
     setSearchInput,
@@ -67,13 +67,13 @@ export default function Search() {
 
   return (
     <>
-      <div role="search-wrapper" className="mt-6 w-2xs justify-self-center">
+      <div role="search-wrapper" className="mt-4 self-center w-2xs lg:self-auto lg:ml-[180px]">
         <Input
           startIcon={showPop ? "glass" : ""}
           onKeyDown={handleKeyDown}
           type="search"
           placeholder={"Search for restaurants"}
-          tail="ring-blue-500 z-35 relative ring-offset-2 focus-within:ring-[5px] ring-offset-white"
+          tail="ring-blue-500 z-30 relative ring-offset-2 focus-within:ring-[5px] ring-offset-white"
           value={searchInput}
           tailInput='custom-search'
           onFocus={() => setShowOverlay(true)}
@@ -83,11 +83,14 @@ export default function Search() {
           showOverlay={showOverlay}
           crossHandler={crossHandler}
           crossRef={crossRef}
+          setShowFilters={setShowFilters}
         />
       </div>
 
       {showOverlay && (
-        <Overlay setShowOverlay={setShowOverlay}>
+        <Overlay
+        style={{zIndex: 25}}
+        setShowOverlay={setShowOverlay}>
           {showPop ? (
             <div
               onClick={(e) => e.stopPropagation()}

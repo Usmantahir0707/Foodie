@@ -6,7 +6,7 @@ export const useGoogleMapApi = (mapContainerRef) => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [address, setAddress] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const mapLoadedRef = useRef(false); // ✅ Only load map once
 
@@ -59,7 +59,7 @@ export const useGoogleMapApi = (mapContainerRef) => {
   const initMap = useCallback(async () => {
     if (mapLoadedRef.current) return; // ✅ Already loaded
     if (!mapContainerRef.current) return; // DOM not ready
-
+     
     try {
       await loadGoogleMapsScript();
 
@@ -83,9 +83,11 @@ export const useGoogleMapApi = (mapContainerRef) => {
       setMap(mapInstance);
       setMarker(markerInstance);
       mapLoadedRef.current = true;
+      setLoading(true);
     } catch (err) {
       console.error("Google Maps init error:", err);
       setError("Failed to initialize Google Maps.");
+      setLoading(true)
     }
   }, [mapContainerRef, loadGoogleMapsScript, reverseGeocode]);
 

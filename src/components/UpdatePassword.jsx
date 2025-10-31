@@ -92,10 +92,11 @@ export default function UpdatePassword({ setChangePassword }) {
       const user = res.user;
       const uid = user.uid;
       uidRef.current = uid;
-
+       console.log(user)
       const snap = await firebase.getData(`users/${uid}`);
+      console.log(snap)
       const data = snap.val();
-
+        console.log(data)
       if (method === "current") {
         firebase.logoutUser();
         setPassword(data.password);
@@ -179,14 +180,14 @@ export default function UpdatePassword({ setChangePassword }) {
             </p>
           </div>
 
-          {/* Step 1 */}
+          {/* Step 1==================================================================== */}
           {step === 1 && (
             <div>
               <h3 className="self-center font-[400] mt-4 text-[19px]">
                 Choose recovery method
               </h3>
               <div className="mt-3 flex flex-col gap-1">
-                <label className="text-[14px]">
+                <label className="text-[15px]">
                   <input
                     className="mr-2 accent-pink-500"
                     type="radio"
@@ -197,7 +198,7 @@ export default function UpdatePassword({ setChangePassword }) {
                   />
                   Recover my current password
                 </label>
-                <label className="text-[14px]">
+                <label className="text-[15px]">
                   <input
                     className="mr-2 accent-pink-500"
                     type="radio"
@@ -225,7 +226,7 @@ export default function UpdatePassword({ setChangePassword }) {
             </div>
           )}
 
-          {/* Step 2 */}
+          {/* Step 2 ======================================================================= */}
           {step === 2 && (
             <div className=" flex flex-col items-center mt-4 gap-4">
               <h2 className="self-center font-[400] text-[18px]">
@@ -261,11 +262,11 @@ export default function UpdatePassword({ setChangePassword }) {
             </div>
           )}
 
-          {/* Step 3 */}
+          {/* Step 3 ========================================================================*/}
           {/* Set new password */}
           {change ? (
-            <div className="mt-7 flex flex-col items-center gap-8 md:gap-4">
-              <h2 className="text-[23px] md:text-[18px]">Set New Password</h2>
+            <div className="mt-7 flex flex-col items-center gap-4">
+              <h2 className="text-[18px]">Set New Password</h2>
 
               {/* Summary on Completion */}
               {!summary ? (
@@ -276,10 +277,10 @@ export default function UpdatePassword({ setChangePassword }) {
                     onClick={() => window.location.reload()}
                     className="absolute top-2 right-2 cursor-pointer p-2"
                   >
-                    <i className="fa-solid fa-circle-xmark text-[34px] text-gray-700"></i>
+                    <i className="fa-solid fa-circle-xmark text-[24px] text-gray-700"></i>
                   </div>
 
-                  <div className="mt-[50%] flex h-[300px] w-full flex-col items-center gap-7 rounded-2xl bg-gray-700 p-4 text-white md:mt-[20%]">
+                  <div className=" flex h-[300px] w-full flex-col items-center gap-7 rounded-2xl bg-gray-700 p-4 text-white mt-[20%]">
                     <div className="flex flex-col items-center">
                       <div className="flex h-[40px] items-center gap-1">
                         <img
@@ -287,7 +288,7 @@ export default function UpdatePassword({ setChangePassword }) {
                           src={green}
                           alt=""
                         />
-                        <h2 className="text-[28px] font-bold">Success</h2>
+                        <h2 className="text-[24px] font-bold">Success</h2>
                       </div>
                       <p className="mt-2 text-[14px]">
                         Your Password have been successully Updated.
@@ -310,7 +311,7 @@ export default function UpdatePassword({ setChangePassword }) {
 
                     <button
                       onClick={() => window.location.reload()}
-                      className="flex h-[50px] md:scale-[80%] w-[100px] items-center justify-center rounded-md bg-green-600 p-2 text-[18px]"
+                      className="flex h-[45px]  w-[140px] items-center justify-center rounded-md bg-green-600 p-2 text-[18px]"
                     >
                       Ok
                     </button>
@@ -318,9 +319,9 @@ export default function UpdatePassword({ setChangePassword }) {
                 </div>
               )}
 
-              <div className="flex w-[210px] flex-col items-center gap-4 md:scale-[80%]">
+              <div className="flex w-[210px] flex-col items-center gap-4 scale-[80%]">
                 <input
-                  className="h-[65px] w-full rounded-2xl bg-gray-300 px-8 py-2 md:h-[50px] md:py-1"
+                  className=" w-full rounded-2xl bg-gray-300 px-8  h-[50px] py-1"
                   type="text"
                   onKeyDown={(e) =>
                     e.key === "Enter" && updateButtonRef.current.click()
@@ -337,7 +338,7 @@ export default function UpdatePassword({ setChangePassword }) {
                   }}
                 />
                 {error.password ? (
-                  <p className="bg-amber-200 p-0 text-red-600 md:text-[14px]">
+                  <p className="bg-amber-200 p-0 text-red-600 text-[14px]">
                     {error.password}
                   </p>
                 ) : (
@@ -353,7 +354,7 @@ export default function UpdatePassword({ setChangePassword }) {
               <button
                 ref={updateButtonRef}
                 onClick={UpdateNewPassword}
-                className="mt-3 h-[57px] w-[155px] bg-[#e21b70] text-[18px] text-white active:scale-[98%] md:mt-0 md:scale-[70%]"
+                className="mt-3 h-[48px] w-[127px] bg-[#e21b70] text-[16px] text-white active:scale-[98%] md:mt-0"
               >
                 Update
               </button>
@@ -365,16 +366,16 @@ export default function UpdatePassword({ setChangePassword }) {
               <div className="mt-4 flex flex-col items-center">
                 {/* heading */}
                 <div className="flex flex-col items-center">
-                  <h2 className="text-[26px] font-[400] md:text-[18px]">
+                  <h2 className=" font-[400] text-[18px]">
                     Confirm its you
                   </h2>
-                  <p className="md:text-[12px]">
+                  <p className="text-[12px]">
                     Enter 6 digit code sent to {userData.phoneNumber}
                   </p>
                 </div>
 
                 {/* boxes */}
-                <div className="mt-4 flex gap-3 p-2 md:gap-0">
+                <div className="mt-4 flex p-2 gap-0">
                   {otp.map((digit, i) => (
                     <input
                       key={i}
@@ -383,7 +384,7 @@ export default function UpdatePassword({ setChangePassword }) {
                       value={digit}
                       onChange={(e) => handleChange(e, i)}
                       ref={(el) => (inputRefs.current[i] = el)}
-                      className="h-[50px] w-[45px] rounded-2xl bg-gray-300 text-center text-[20px] shadow-[0px_0px_5px_rgba(0,0,0,0.5)] md:scale-[75%]"
+                      className="h-[50px] w-[45px] rounded-2xl bg-gray-300 text-center text-[20px] shadow-[0px_0px_5px_rgba(0,0,0,0.5)] scale-[75%]"
                     />
                   ))}
                 </div>
@@ -392,7 +393,7 @@ export default function UpdatePassword({ setChangePassword }) {
                 <button
                   onClick={handleVerifyOtp}
                   ref={verifyBtnRef}
-                  className={`mt-8 h-[64px] w-[170px] rounded-md bg-[#e21b70] text-[18px] text-white md:mt-2 md:scale-[70%] ${loader && "pointer-events-none bg-gray-500"}`}
+                  className={`h-[48px] w-[127px] rounded-md bg-[#e21b70] text-[16px] text-white mt-2 ${loader && "pointer-events-none bg-gray-500"}`}
                 >
                   {loader ? <LoadingDots text={"Verifying"} /> : "Verify Otp"}
                 </button>
@@ -407,7 +408,7 @@ export default function UpdatePassword({ setChangePassword }) {
                     navigator.clipboard.writeText(password);
                     copied();
                   }}
-                  className="flex h-[70px] w-[220px] md:scale-[90%] cursor-pointer items-center justify-center gap-2 rounded-md bg-gray-200 shadow active:scale-[98%]"
+                  className="flex h-[70px] w-[220px] scale-[90%] cursor-pointer items-center justify-center gap-2 rounded-md bg-gray-200 shadow active:scale-[88%]"
                 >
                   <span className="md:text-[16px]">
                     {password}{" "}

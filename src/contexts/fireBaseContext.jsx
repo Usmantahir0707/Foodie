@@ -18,7 +18,7 @@ import {
   updatePassword,
 } from "firebase/auth";
 
-// --- Firebase config
+// -- Firebase config
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -34,7 +34,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 
-// --- Create context
+// - Create context
 const FirebaseContext = createContext(null);
 
 export function FirebaseProvider({ children }) {
@@ -57,12 +57,12 @@ export function FirebaseProvider({ children }) {
   const loginUserWithEmail = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-  // --- Database helpers
+  // -- Database helpers
   const putData = (key, data) => set(ref(database, key), data);
   const getData = (key) => get(ref(database, key));
   const updateData = (path, data) => update(ref(database, path), data);
 
-  // --- Phone Auth (OLD working version)
+  // --- Phone Auth 
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
       const siteKey = "6LfjHvArAAAAAJteLdnRVTpHldSVEQbmj4HThYS9"; // <-- your reCAPTCHA v2 key
@@ -77,7 +77,7 @@ export function FirebaseProvider({ children }) {
     }
     return window.recaptchaVerifier;
   };
-
+// send verification code
   const sendOtp = async (phoneNumber) => {
     if (!phoneNumber) return console.log("Enter valid number");
     try {
@@ -95,7 +95,7 @@ export function FirebaseProvider({ children }) {
       throw err;
     }
   };
-
+// -- verify otp
   const verifyOtp = async (otp, confirmationObjRef) => {
     try {
       if (!confirmationObjRef.current) throw new Error("No OTP session.");

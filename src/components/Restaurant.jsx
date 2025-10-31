@@ -143,7 +143,7 @@ export default function Restaurant() {
           </div>
         </div>
       </div>
-
+      
       {/* menu header */}
       <MenuHeader
         restaurant={restaurant}

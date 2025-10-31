@@ -1,7 +1,9 @@
 import { motion } from "motion/react";
 import Cart from "./Cart";
-import { useState } from "react";
-import { useCart } from '../contexts/cartContext'
+import { useEffect, useState } from "react";
+import { useCart } from "../contexts/cartContext";
+import Overlay from "./Overlay";
+import ItemProfile from "./ItemProfile";
 
 export default function Menu({
   restaurant,
@@ -10,9 +12,29 @@ export default function Menu({
   isClicked,
 }) {
   const [showCart, setShowCart] = useState(false);
-  const {cartData, setCartData} = useCart()
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { cartData, setCartData } = useCart();
 
-  const handleAddButton = (title, price, desc, img) => {
+  useEffect(() => {
+    window.scrollTo({ top: "0", behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (showOverlay) {
+      // Prevent background scroll
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    return () => (document.body.style.overflow = "auto");
+  }, [showOverlay]);
+
+  const handleAddButton = (item) => {
+  const {title, price, desc, img} = item;
+  if(item.options){
+    setShowOverlay(true)
+  }else{
     setCartData((p) => {
       const existingItem = p.find((f) => f.title === title);
       if (existingItem) {
@@ -24,7 +46,8 @@ export default function Menu({
         ];
       }
     });
-  };
+  }};
+
   const handleMinusButton = (title) => {
     setCartData((p) =>
       p
@@ -35,6 +58,23 @@ export default function Menu({
 
   return (
     <div className="bg-white pb-[150px]">
+
+      {/* Item Profile of clicked item*/}
+       <div>       
+      {showOverlay && (
+        <div
+          onScroll={(e) => e.stopPropagation()}
+          className="z-50 overflow-hidden rounded-2xl"
+        >
+          <ItemProfile
+          selectedItem={selectedItem}
+          setShowOverlay={setShowOverlay}
+          />
+        </div>
+      )}
+    </div>
+
+
       {restaurant.menu.map((x) => (
         <motion.section
           ref={(el) => (menuRef.current[x.title] = el)}
@@ -56,8 +96,12 @@ export default function Menu({
               <div className="flex flex-col gap-7">
                 {x.deals.map((item) => (
                   <div
+                    onClick={() => {
+                      setShowOverlay(true);
+                      setSelectedItem(item);
+                    }}
                     key={item.title}
-                    className="relative flex min-h-[150px] w-full rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_2px_rgba(0,0,0,0.2)]"
+                    className="relative flex min-h-[150px] w-full cursor-pointer rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_2px_rgba(0,0,0,0.2)]"
                   >
                     <div className="flex w-[150%] flex-col gap-1">
                       <h2 className="text-[20px] font-[600]">{item.title}</h2>
@@ -77,14 +121,20 @@ export default function Menu({
                       />
                     </div>
                     <button
+                      onClick={(e) => e.stopPropagation()}
                       className={`ease absolute flex h-[42px] cursor-pointer items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[42px] rounded-[50%] bg-gray-500"}`}
                     >
                       {cartData.find((f) => f.title === item.title) && (
                         <span
                           onClick={() => handleMinusButton(item.title)}
-                          className="w-full flex justify-center items-center"
+                          className="flex w-full items-center justify-center"
                         >
-                          {cartData.find((f) => f.title === item.title)?.qty < 2 ? <i className="fa-regular fa-trash-can text-[16px]"></i> : '-'}
+                          {cartData.find((f) => f.title === item.title)?.qty <
+                          2 ? (
+                            <i className="fa-regular fa-trash-can text-[16px]"></i>
+                          ) : (
+                            "-"
+                          )}
                         </span>
                       )}
                       <span className="text-[18px]">
@@ -93,12 +143,7 @@ export default function Menu({
 
                       <span
                         onClick={() =>
-                          handleAddButton(
-                            item.title,
-                            item.price,
-                            item.desc,
-                            item.img,
-                          )
+                          handleAddButton(item)
                         }
                         className="w-full"
                       >
@@ -120,8 +165,12 @@ export default function Menu({
           onClick={() => setShowCart(true)}
           className="flex h-[60px] w-[90%] items-center justify-between rounded-md bg-[#e21b70] px-4 text-white"
         >
-          <div className="flex gap-1 h-full items-center px-2"><i className="fa-solid fa-cart-shopping"></i>
-          <span>{cartData.reduce((acc, item)=> acc + item.qty, 0)}</span> </div>
+          <div className="flex h-full items-center gap-1 px-2">
+            <i className="fa-solid fa-cart-shopping"></i>
+            <span>
+              {cartData.reduce((acc, item) => acc + item.qty, 0)}
+            </span>{" "}
+          </div>
           <div className="flex h-full items-center px-3 text-[18px]">
             view cart
           </div>

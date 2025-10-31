@@ -1,11 +1,12 @@
 import logo from "../assets/logo.png";
 import useScrollVisibility from "../hooks/useScrollVisibility";
 import NavClick from "./NavClick";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../contexts/cartContext";
 import { useEffect, useRef, useState } from "react";
 import { useFirebase } from "../contexts/fireBaseContext";
 import { useGoogleMapApi } from "../hooks/useGoogleMapsApi";
+import Overlay from "./Overlay";
 
 export default function Header({ fullHeader, blockHeader }) {
   const showHeader = useScrollVisibility(100);
@@ -19,9 +20,10 @@ export default function Header({ fullHeader, blockHeader }) {
   const [userMenu, setUserMenu] = useState(false);
   const mapContainerRef = useRef(null);
   const inputRef = useRef(null);
+  const location = useLocation();
 
-// ===========================================================================
-        //  google map api hook
+  // ===========================================================================
+  //  google map api hook
   const {
     address,
     loading,
@@ -31,24 +33,23 @@ export default function Header({ fullHeader, blockHeader }) {
     initMap,
     resetMap,
   } = useGoogleMapApi(mapContainerRef);
-// ==========================================================================
+  // ==========================================================================
 
-      // reinitialize the map each time 
+  // reinitialize the map each time
   useEffect(() => {
     if (locating && mapContainerRef.current) {
       initMap();
     }
   }, [locating, initMap]);
 
-  
   useEffect(() => {
     if (locating && inputRef.current) {
       initAutocomplete(inputRef.current);
     }
   }, [locating, initAutocomplete]);
-// =======================================================================
+  // =======================================================================
 
-    // Fire User and his realtime data
+  // Fire User and his realtime data
   useEffect(() => {
     const user = firebase.user;
     if (user) {
@@ -66,7 +67,7 @@ export default function Header({ fullHeader, blockHeader }) {
       getData();
     }
   }, [firebase.user]);
-// ========================================================================
+  // ========================================================================
 
   return (
     <header
@@ -79,9 +80,9 @@ export default function Header({ fullHeader, blockHeader }) {
             : "translateY(-100%)",
         transition: "all 0.3s ease",
       }}
-      className={`${blockHeader ? "block" : "sticky"} top-0 z-40 bg-white pt-3 shadow-md`}
+      className={`${blockHeader ? "block" : "sticky"} top-0 z-40 bg-white pt-3 shadow-md ${location.pathname === "/search-result" && "pb-2 sm:pb-6"}`}
     >
-   {/* =========================================================================== */}
+      {/* =========================================================================== */}
       {/* //////////// Header Top flex with -user -logo -cart */}
       <div
         role="Header-Main"
@@ -90,55 +91,33 @@ export default function Header({ fullHeader, blockHeader }) {
         {/* User and Signup area */}
         {!userData ? (
           <div
-            className="flex gap-1 translate-y-0 text-[12px] cursor-pointer flex-col  md:translate-y-[-5px] md:flex-row md:gap-1.5"
+            className="flex h-[45px] translate-y-0 cursor-pointer flex-col gap-1 text-[12px] md:translate-y-[-5px] md:flex-row md:gap-1.5"
             onClick={() => navigate("/login")}
           >
             <i className="fa-solid fa-user self-start rounded-[8px] bg-gray-300 p-2 text-[18px]"></i>{" "}
             {""}
-            <span>
-              Log-in
-            </span>
-            
+            <span>Log-in</span>
           </div>
         ) : (
           <div
             onClick={() => setUserMenu((p) => !p)}
-            className={`relative w-[90px] rounded-[14%] px-[8px] ${userMenu ? "bg-gray-100" : ""}`}
+            className="h-[45px] flex gap-1 cursor-pointer"
           >
-            {userData.profilePic && (
-              <img className="w-[67%]" src={userData.profilePic} alt="" />
-            )}
-            <p className="w-full truncate">{userData.name}</p>
-            <span>
-              <i className="fa-solid fa-caret-down"></i>
-            </span>
-
-            {/* ///// User Menu */}
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className={`absolute top-[101%] flex h-[296px] w-[180px] transform flex-col items-center gap-1 rounded-md bg-gray-200 p-2 shadow transition-transform duration-300 ease-in-out ${userMenu ? "scale-100" : "scale-0"}`}
-            >
-              <div className="flex w-full justify-center">
-                <img className="w-[70%]" src={userData.profilePic} alt="" />
-              </div>
-              <h2 className="w-full truncate text-center text-[18px] font-[600]">
-                {userData.name}
-              </h2>
-              <ul className={`flex flex-col`}>
-                <li className="py-0.5">Edit profile image</li>
-                <li className="py-0.5">Change Location</li>
-                <li className="py-0.5">Change Password</li>
-              </ul>
-              <span
-                className="mt-2 w-full py-1.5 text-center font-[500]"
-                onClick={() => {
-                  firebase.logoutUser();
-                  navigate("/login");
-                }}
+            {userData.profilePic ? (
+              <img
+              onClick={()=> firebase.logoutUser()}
+                className="w-[40px] h-[40px] object-center overflow-hidden rounded-[50%] flex-shrink-0"
+                src={userData.profilePic}
+                alt=""
+              />
+            ) :
+              <i className="fa-solid fa-user self-start rounded-[8px] bg-gray-300 p-2 text-[18px]"></i>}
+              <span className="text-[12px]"
               >
-                Log out
-              </span>
-            </div>
+                {userData.name}
+                </span>
+            
+           
           </div>
         )}
 
@@ -154,34 +133,40 @@ export default function Header({ fullHeader, blockHeader }) {
         />
 
         {/* cart */}
-        <div className="relative flex justify-end cursor-pointer">
+        <div className="relative flex cursor-pointer justify-end">
           <span className="absolute top-[-20px] right-0">
             {cartData.reduce((acc, item) => acc + item.qty, 0)}
           </span>
           <i className="fa-solid fa-cart-shopping text-[20px]"></i>
         </div>
       </div>
-{/* =============================================================================== */}
+      {/* =============================================================================== */}
       {/* ///////////// Middle Flex with things like -location -estimated time*/}
       <div
         role="location Estimatmed time"
-        className={`mt-1 flex relative cursor-pointer justify-self-center pb-2 ${
+        className={`relative mt-1 flex items-center cursor-pointer justify-self-center rounded-md py-1 ${
           !blockHeader
-            ? "md:absolute md:bottom-0 right-0 justify-center"
-            : "flex flex-row w-full mt-3 gap-3 justify-between px-2 pb-0 md:w-full md:justify-center md:gap-5"
+            ? "max-w-[50vw] min-w-[10vw] justify-center sm:right-0 sm:max-w-[30vw] sm:min-w-[10vw] sm:bg-blue-50 lg:absolute lg:bottom-0"
+            : "mt-2 flex  flex-row justify-between gap-3 px-5 pb-0 w-[100%]  "
         }`}
       >
-                {/* location */}
-        <div className={`flex truncate items-center ${!blockHeader ? 'w-[90%]' : 'w-[46%]'}  md:w-[80%] gap-2 text-center`}>
+        {/* location */}
+        <div
+          className={`flex items-center truncate ${!blockHeader ? "w-[90%]" : "w-[46%]"} gap-2 text-center md:w-[72%]`}
+        >
           <span
             onClick={() => setLocating(true)}
-            className="inline-block truncate text-gray-600"
+            className="flex gap-1 items-center w-[full] truncate text-gray-600"
           >
-            <i className={`fa-solid fa-location-dot text-[#792b4c] text-[13px]`}></i>{" "}
+            <i
+              className={`fa-solid fa-location-dot text-[13px] text-[#792b4c]`}
+            ></i>{" "}
             {userAddress ? (
-              <span className="text-[12px] w-[200px] truncate">{userAddress.replace(/^plot\b/i, '')}</span>
+              <span className="w-[full] inline-block truncate text-[10px]">
+                {userAddress.replace(/^plot\b/i, "")}
+              </span>
             ) : (
-              <span className="w-[80%] text-[12px]">Add Location</span>
+              <span className="text-[10px]">Add Location</span>
             )}
           </span>
         </div>
@@ -190,29 +175,26 @@ export default function Header({ fullHeader, blockHeader }) {
         {!blockHeader ? (
           ""
         ) : (
-          <div className="rounded-md w-[50%] md:w-[20%] bg-gray-300 px-2 pt-0.5 pb-1">
-            <i className="fa-regular fa-clock  mr-2"></i>
-            <span className="text-[13px]">
-              Estimated time 23min..
-            </span>
-             
+          <div className="w-fit rounded-md bg-gray-300 px-1 pt-0.5 pb-1 mb-1">
+            <i className="fa-regular fa-clock mr-2"></i>
+            <span className="text-[10px]">Estimated time 23min..</span>
           </div>
         )}
 
         {/* Update Address */}
         {locating && (
-          <div
-            role="locating overlay"
-            onClick={() => {
-              setLocating(false);
-              resetMap();
+          <Overlay
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0",
             }}
-            className="fixed top-0 left-0 z-10 flex h-[100vh] w-[100vw] items-center justify-center bg-gray-500/45"
           >
             <div
               role="locating interface"
               onClick={(e) => e.stopPropagation()}
-              className="relative pb-10 pt-5 flex w-[330px] flex-col rounded-md bg-white"
+              className="tr relative flex w-[330px] flex-col rounded-md bg-white pt-5 pb-10"
             >
               <span
                 role="locating close button"
@@ -220,28 +202,33 @@ export default function Header({ fullHeader, blockHeader }) {
                   setLocating(false);
                   resetMap();
                 }}
-                className="absolute top-2 right-2 flex items-center justify-center p-3"
+                className="absolute top-2 right-2 flex cursor-pointer items-center justify-center p-3"
               >
-                <i className="fa-regular fa-circle-xmark text-[18px] text-gray-700"></i>
+                <i className="fa-regular fa-circle-xmark text-[20px] text-gray-700"></i>
               </span>
 
-              <h2 className=" self-center text-[18px] font-[600]">
+              <h2 className="self-center text-[18px] font-[600]">
                 Update Address
               </h2>
               <input
-                className="mt-7 h-[40px] text-[13px] w-[70%] self-center bg-gray-200 px-2.5"
+                className="mt-7 h-[40px] w-[70%] self-center bg-gray-200 px-2.5 text-[13px]"
                 ref={inputRef}
                 type="text"
                 placeholder="Search Address"
               />
+
               <div
                 ref={mapContainerRef}
                 className="mt-6 h-[28vh] w-[80%] self-center shadow-md"
               />
-              <p className="mt-6 w-[80%] text-[13px] self-center">
+              {loading && (
+                <div className="shimmer absolute top-[-40px] right-0 h-[29vh] w-[80%] self-center overflow-hidden rounded-md shadow-md sm:top-[27%]"></div>
+              )}
+
+              <p className="mt-6 w-[80%] self-center text-[13px]">
                 {" "}
                 {address
-                  ? address.fullAddress.replace(/^plot\b/i, '')
+                  ? address.fullAddress.replace(/^plot\b/i, "")
                   : loading
                     ? "loading..."
                     : "Add new address"}{" "}
@@ -249,7 +236,7 @@ export default function Header({ fullHeader, blockHeader }) {
               <div className="mt-8 flex w-[80%] justify-center gap-6 self-center">
                 <button
                   onClick={fetchUserLocation}
-                  className="w-[120px] text-[13px] rounded bg-[#e21b70] p-2 text-white"
+                  className="w-[120px] rounded bg-[#e21b70] p-2 text-[13px] text-white"
                 >
                   Auto locate
                 </button>
@@ -272,13 +259,13 @@ export default function Header({ fullHeader, blockHeader }) {
                       resetMap();
                     }
                   }}
-                  className={`w-[120px] text-[13px] rounded p-3 text-white ${address ? "bg-[#e21b70]" : "pointer-events-none bg-gray-300"}`}
+                  className={`w-[120px] rounded p-3 text-[13px] text-white ${address ? "bg-[#e21b70]" : "pointer-events-none bg-gray-300"}`}
                 >
                   Save
                 </button>
               </div>
             </div>
-          </div>
+          </Overlay>
         )}
       </div>
 

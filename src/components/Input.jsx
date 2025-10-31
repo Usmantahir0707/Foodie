@@ -17,6 +17,7 @@ export default function Input({
   crossRef,
   inputMode,
   maxLength,
+  setShowFilters,
 }) {
   return (
     <div 
@@ -57,7 +58,10 @@ export default function Input({
       {endIcon === "eye" && <div className="flex items-center w-[20px] h-full "><i className="fa-solid fa-eye-slash"></i></div>}
       {endIcon === "email" && <i className="fa-solid fa-envelope"></i>}
       {endIcon === "mobile" && <i className="fa-solid fa-phone"></i>}
-      {endIcon === "filter" && <i className="fa-solid fa-sliders"></i>}
+      {endIcon === "filter" && 
+      <i
+      onClick={()=> setShowFilters((p)=> !p)}
+      className="fa-solid fa-sliders"></i>}
       {endIcon === "cross" && <div  className="h-full px-1 w-[30px] justify-center cursor-pointer flex items-center" tabIndex={0}  ref={crossRef} onClick={crossHandler}><i className="fa-solid fa-xmark"></i></div>}
       
 

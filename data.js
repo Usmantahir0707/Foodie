@@ -6,8 +6,8 @@ export default [
     assets: {
       rating: "4.5",
       img: "https://i.postimg.cc/mZNTkGnd/bk.png",
-      fee: '40',
-      time: '40min',
+      fee: "40",
+      time: "40min",
       totalReviews: 120,
       reviewDetails: [
         { user: "Alice", comment: "Great burger!", rating: 5 },
@@ -61,8 +61,8 @@ export default [
     assets: {
       rating: "4.6",
       img: "https://i.postimg.cc/RVS4nD5v/butt.png",
-      fee: '60',
-      time: '45min',
+      fee: "60",
+      time: "45min",
       totalReviews: 85,
       reviewDetails: [
         { user: "Faisal", comment: "Authentic taste.", rating: 5 },
@@ -133,8 +133,8 @@ export default [
     assets: {
       rating: "4.4",
       img: "https://i.postimg.cc/xTCBQDVN/sub.png",
-      fee: '59',
-      time: '30min',
+      fee: "59",
+      time: "30min",
       totalReviews: 60,
       reviewDetails: [
         { user: "Olivia", comment: "Fresh and healthy.", rating: 5 },
@@ -171,8 +171,8 @@ export default [
     assets: {
       rating: "4.6",
       img: "https://i.postimg.cc/8ct8HTQN/mcdo.png",
-      fee: '80',
-      time: '30min',
+      fee: "80",
+      time: "30min",
       totalReviews: 150,
       reviewDetails: [
         { user: "Sophia", comment: "Always good.", rating: 5 },
@@ -188,18 +188,43 @@ export default [
         deals: [
           {
             title: "Midnight Meal",
-            logo: 'https://i.postimg.cc/FzRV695p/mcd.png',
+            logo: "https://i.postimg.cc/FzRV695p/mcd.png",
             price: "450",
-            prevPrice: '600',
+            prevPrice: "600",
             desc: "McChicken + coke + fries (discounted price)",
             img: "https://i.postimg.cc/SxS0ntdG/Untitled_design.png",
             show: true,
+            options: [
+              {
+                title: "Choose your drink",
+                arr: [
+                  {
+                    title: "Coca-Cola",
+                    price: "150",
+                    desc: "Cold soft drink",
+                    img: "https://i.postimg.cc/bYmwYkpW/coke.png",
+                  },
+                  {
+                    title: "Sprite",
+                    price: "200",
+                    desc: "Freshly brewed coffee",
+                    img: "https://i.postimg.cc/CLkg9qPW/sprite.png",
+                  },
+                  {
+                    title: "Fanta",
+                    price: "200",
+                    desc: "Freshly brewed coffee",
+                    img: "https://i.postimg.cc/WpQV9nnG/Fanta.png",
+                  },
+                ],
+              },
+            ],
           },
           {
             title: "Double Quarter Meal",
-            logo: 'https://i.postimg.cc/FzRV695p/mcd.png',
+            logo: "https://i.postimg.cc/FzRV695p/mcd.png",
             price: "450",
-            prevPrice: '600',
+            prevPrice: "600",
             desc: "Double Quarter + coke + fries (discounted price)",
             img: "https://i.postimg.cc/J4m64H4w/double_quater.png",
           },
@@ -420,7 +445,6 @@ export default [
             desc: "An irresistible blend! A creamy, fresh milk and vanilla syrup shake so thick it hardly makes it up the straw.Also available in chocolate and strawberry.",
             img: "https://i.postimg.cc/6pKXKpFT/Vanilla-Shake.png",
           },
-          
         ],
       },
       {
@@ -548,7 +572,6 @@ export default [
           },
         ],
       },
-      
     ],
   },
   {
@@ -558,8 +581,8 @@ export default [
     assets: {
       rating: "4.7",
       img: "https://i.postimg.cc/4yJkVm0W/kfcc.png",
-      fee: '75',
-      time: '40min',
+      fee: "75",
+      time: "40min",
       totalReviews: 180,
       reviewDetails: [
         { user: "Ethan", comment: "Crispy and tasty.", rating: 5 },
@@ -575,9 +598,9 @@ export default [
         deals: [
           {
             title: "5-Piece Chicken",
-            logo: 'https://i.postimg.cc/28t2PB5Z/Kfc.png',
+            logo: "https://i.postimg.cc/28t2PB5Z/Kfc.png",
             price: "1100",
-            prevPrice: '1450',
+            prevPrice: "1450",
             desc: "5 pieces of crispy chicken with fries and 2 drinks (discounted)",
             img: "https://i.postimg.cc/cJw97408/5piece.png",
             show: true,
@@ -635,7 +658,6 @@ export default [
           },
         ],
       },
-      
     ],
   },
   {
@@ -645,8 +667,8 @@ export default [
     assets: {
       rating: "4.5",
       img: "https://i.postimg.cc/RZ8ByC30/bbqq.png",
-      fee: '40',
-      time: '50min',
+      fee: "40",
+      time: "50min",
       totalReviews: 70,
       reviewDetails: [
         { user: "Hassan", comment: "Amazing flavors.", rating: 5 },
@@ -662,9 +684,9 @@ export default [
         deals: [
           {
             title: "Family Grill",
-            logo: 'https://i.postimg.cc/ZKmf8yqP/bbq.jpg',
+            logo: "https://i.postimg.cc/ZKmf8yqP/bbq.jpg",
             price: "2200",
-            prevPrice: '2500',
+            prevPrice: "2500",
             desc: "BBQ platter for 4 at a discounted rate",
             img: "https://i.postimg.cc/wBQ5Tt9F/platter.png",
             show: true,
@@ -699,7 +721,6 @@ export default [
           },
         ],
       },
-      
     ],
   },
   {
@@ -709,8 +730,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/nzftVdGb/dom.png",
-      fee: '100',
-      time: '25min',
+      fee: "100",
+      time: "25min",
       totalReviews: 130,
       reviewDetails: [
         { user: "James", comment: "Delicious pizza.", rating: 5 },
@@ -758,8 +779,8 @@ export default [
     assets: {
       rating: "4.2",
       img: "https://i.postimg.cc/Gpk5KbGV/taco.png",
-      fee: '60',
-      time: '30min',
+      fee: "60",
+      time: "30min",
       totalReviews: 90,
       reviewDetails: [
         { user: "Liam", comment: "Tasty tacos!", rating: 5 },
@@ -796,8 +817,8 @@ export default [
     assets: {
       rating: "4.4",
       img: "https://i.postimg.cc/QxYGKNJq/pizzahut.png",
-      fee: '50',
-      time: '30min',
+      fee: "50",
+      time: "30min",
       totalReviews: 110,
       reviewDetails: [
         { user: "Liam", comment: "Great pizza!", rating: 5 },
@@ -851,8 +872,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/NjLtd2jV/chinaEx.png",
-      fee: '40',
-      time: '40min',
+      fee: "40",
+      time: "40min",
       totalReviews: 80,
       reviewDetails: [
         { user: "Liam", comment: "Delicious!", rating: 5 },
@@ -906,8 +927,8 @@ export default [
     assets: {
       rating: "4.7",
       img: "https://i.postimg.cc/cLtjKRHs/sushi-world.png",
-      fee: '75',
-      time: '30min',
+      fee: "75",
+      time: "30min",
       totalReviews: 95,
       reviewDetails: [
         { user: "Liam", comment: "Amazing sushi!", rating: 5 },
@@ -961,8 +982,8 @@ export default [
     assets: {
       rating: "4.4",
       img: "https://i.postimg.cc/6QRDPrJH/popo.png",
-      fee: '40',
-      time: '30min',
+      fee: "40",
+      time: "30min",
       totalReviews: 100,
       reviewDetails: [
         { user: "Liam", comment: "Crispy chicken!", rating: 5 },
@@ -999,8 +1020,8 @@ export default [
     assets: {
       rating: "4.5",
       img: "https://i.postimg.cc/qqBSgWtY/sec.png",
-      fee: '60',
-      time: '20min',
+      fee: "60",
+      time: "20min",
       totalReviews: 80,
       reviewDetails: [
         { user: "Emma", comment: "Nice coffee!", rating: 5 },
@@ -1017,12 +1038,12 @@ export default [
           {
             title: "Morning Combo",
             price: "750",
-            prevPrice: '900',
-            logo: 'https://i.postimg.cc/WpHK04kX/Second-Cup.png',
+            prevPrice: "900",
+            logo: "https://i.postimg.cc/WpHK04kX/Second-Cup.png",
             desc: "Latte + muffin combo available until 11am",
             img: "https://i.postimg.cc/hjGmDpyP/latte.png",
             show: true,
-          }
+          },
         ],
       },
       {
@@ -1039,7 +1060,7 @@ export default [
             price: "500",
             desc: "Chilled espresso blended with milk and ice, topped with foam",
             img: "https://cdn.pixabay.com/photo/2018/05/17/20/27/iced-coffee-3407663_1280.jpg",
-          }
+          },
         ],
       },
       {
@@ -1050,10 +1071,9 @@ export default [
             price: "350",
             desc: "Freshly baked muffin with real blueberries",
             img: "https://cdn.pixabay.com/photo/2016/04/25/22/37/blueberry-muffins-1356210_1280.jpg",
-          }
+          },
         ],
       },
-      
     ],
   },
   {
@@ -1063,8 +1083,8 @@ export default [
     assets: {
       rating: "4.8",
       img: "https://i.postimg.cc/FR42XYhh/salt.png",
-      fee: '50',
-      time: '30min',
+      fee: "50",
+      time: "30min",
       totalReviews: 90,
       reviewDetails: [
         { user: "Hassan", comment: "Excellent BBQ!", rating: 5 },
@@ -1135,8 +1155,8 @@ export default [
     assets: {
       rating: "4.2",
       img: "https://i.postimg.cc/Hsk1L8Xx/moch.png",
-      fee: '80',
-      time: '40min',
+      fee: "80",
+      time: "40min",
       totalReviews: 70,
       reviewDetails: [
         { user: "Emma", comment: "Nice coffee!", rating: 5 },
@@ -1190,8 +1210,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/BbhyFNHv/shake.png",
-      fee: '90',
-      time: '40min',
+      fee: "90",
+      time: "40min",
       totalReviews: 110,
       reviewDetails: [
         { user: "Liam", comment: "ShackBurger is awesome!", rating: 5 },
@@ -1245,8 +1265,8 @@ export default [
     assets: {
       rating: "4.1",
       img: "https://i.postimg.cc/2SqpQpHN/panda.png",
-      fee: '50',
-      time: '45min',
+      fee: "50",
+      time: "45min",
       totalReviews: 80,
       reviewDetails: [
         { user: "Liam", comment: "Tasty!", rating: 5 },
@@ -1300,8 +1320,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/NfzSfJQJ/stu.png",
-      fee: '40',
-      time: '25min',
+      fee: "40",
+      time: "25min",
       totalReviews: 75,
       reviewDetails: [
         { user: "Ali", comment: "Tasty biryani.", rating: 5 },
@@ -1355,8 +1375,8 @@ export default [
     assets: {
       rating: "4.0",
       img: "https://i.postimg.cc/QMLzcF9c/wendys.png",
-      fee: '80',
-      time: '30min',
+      fee: "80",
+      time: "30min",
       totalReviews: 90,
       reviewDetails: [
         { user: "Emma", comment: "Nice burger!", rating: 5 },
@@ -1410,8 +1430,8 @@ export default [
     assets: {
       rating: "4.5",
       img: "https://i.postimg.cc/FFZQmVf8/five.png",
-      fee: '40',
-      time: '40min',
+      fee: "40",
+      time: "40min",
       totalReviews: 125,
       reviewDetails: [
         { user: "John", comment: "Best burger!", rating: 5 },
@@ -1465,8 +1485,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/FKL44tcV/chipotlee.png",
-      fee: '40',
-      time: '40min',
+      fee: "40",
+      time: "40min",
       totalReviews: 70,
       reviewDetails: [
         { user: "Carlos", comment: "Awesome burritos!", rating: 5 },
@@ -1520,8 +1540,8 @@ export default [
     assets: {
       rating: "4.2",
       img: "https://i.postimg.cc/15vP0rsw/cinabon.png",
-      fee: '70',
-      time: '30min',
+      fee: "70",
+      time: "30min",
       totalReviews: 60,
       reviewDetails: [
         { user: "Emily", comment: "Delicious cinnamon roll!", rating: 5 },
@@ -1558,8 +1578,8 @@ export default [
     assets: {
       rating: "4.5",
       img: "https://i.postimg.cc/J7KSS7vW/startbucks.png",
-      fee: '50',
-      time: '45min',
+      fee: "50",
+      time: "45min",
       totalReviews: 100,
       reviewDetails: [
         { user: "Anna", comment: "Great coffee!", rating: 5 },
@@ -1613,8 +1633,8 @@ export default [
     assets: {
       rating: "4.1",
       img: "https://i.postimg.cc/vB7w4W01/dunkin.png",
-      fee: '70',
-      time: '20min',
+      fee: "70",
+      time: "20min",
       totalReviews: 65,
       reviewDetails: [
         { user: "Michael", comment: "Good coffee.", rating: 4 },
@@ -1668,8 +1688,8 @@ export default [
     assets: {
       rating: "4.3",
       img: "https://i.postimg.cc/PxQ0XdqY/ranchers.png",
-      fee: '40',
-      time: '30min',
+      fee: "40",
+      time: "30min",
       totalReviews: 110,
       reviewDetails: [
         { user: "Liam", comment: "Loved the burger!", rating: 5 },
@@ -1723,8 +1743,8 @@ export default [
     assets: {
       rating: "4.4",
       img: "https://i.postimg.cc/y82Mnf5g/panera.png",
-      fee: '80',
-      time: '30min',
+      fee: "80",
+      time: "30min",
       totalReviews: 105,
       reviewDetails: [
         { user: "Rachel", comment: "Healthy options.", rating: 5 },
