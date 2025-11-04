@@ -86,7 +86,7 @@ export default function ItemProfile({ selectedItem, setShowOverlay }) {
           <div className="w-fit px-4 text-[18px] font-[500]">
             Rs. {selectedItem.price}
           </div>
-          <p>{selectedItem.desc}</p>
+          <p className="px-2">{selectedItem.desc}</p>
 
           {/*flavours and otions for item*/}
           {selectedItem.options &&

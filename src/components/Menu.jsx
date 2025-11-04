@@ -15,10 +15,28 @@ export default function Menu({
   const [showOverlay, setShowOverlay] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { cartData, setCartData } = useCart();
+  const [cartArea, setCartArea] = useState(() => {
+  if (typeof window !== "undefined") {
+    return window.innerWidth < 1024;
+  }
+  return false; 
+});
 
   useEffect(() => {
-    window.scrollTo({ top: "0", behavior: "smooth" });
-  }, []);
+    window.scrollTo(0,0)
+  const handleScroll = () => {
+    if(window.scrollY > 470){
+      setCartArea(true)
+    }else{
+      window.innerWidth > 1024 && setCartArea(false)
+    }
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  handleScroll();
+
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
 
   useEffect(() => {
     if (showOverlay) {
@@ -31,22 +49,25 @@ export default function Menu({
   }, [showOverlay]);
 
   const handleAddButton = (item) => {
-  const {title, price, desc, img} = item;
-  if(item.options){
-    setShowOverlay(true)
-  }else{
-    setCartData((p) => {
-      const existingItem = p.find((f) => f.title === title);
-      if (existingItem) {
-        return p.map((x) => (x.title === title ? { ...x, qty: x.qty + 1 } : x));
-      } else {
-        return [
-          ...p,
-          { title: title, price: price, desc: desc, img: img, qty: 1 },
-        ];
-      }
-    });
-  }};
+    const { title, price, desc, img } = item;
+    if (item.options) {
+      setShowOverlay(true);
+    } else {
+      setCartData((p) => {
+        const existingItem = p.find((f) => f.title === title);
+        if (existingItem) {
+          return p.map((x) =>
+            x.title === title ? { ...x, qty: x.qty + 1, resTitle:restaurant.title } : {...x, resTitle:restaurant.title},
+          );
+        } else {
+          return [
+            ...p,
+            { title: title, price: price, desc: desc, img: img, qty: 1, resTitle:restaurant.title },
+          ];
+        }
+      });
+    }
+  };
 
   const handleMinusButton = (title) => {
     setCartData((p) =>
@@ -55,25 +76,23 @@ export default function Menu({
         .filter((f) => f.qty > 0),
     );
   };
-
+console.log(restaurant)
   return (
     <div className="bg-white pb-[150px]">
-
       {/* Item Profile of clicked item*/}
-       <div>       
-      {showOverlay && (
-        <div
-          onScroll={(e) => e.stopPropagation()}
-          className="z-50 overflow-hidden rounded-2xl"
-        >
-          <ItemProfile
-          selectedItem={selectedItem}
-          setShowOverlay={setShowOverlay}
-          />
-        </div>
-      )}
-    </div>
-
+      <div>
+        {showOverlay && (
+          <div
+            onScroll={(e) => e.stopPropagation()}
+            className="z-50 overflow-hidden rounded-2xl"
+          >
+            <ItemProfile
+              selectedItem={selectedItem}
+              setShowOverlay={setShowOverlay}
+            />
+          </div>
+        )}
+      </div>
 
       {restaurant.menu.map((x) => (
         <motion.section
@@ -93,7 +112,7 @@ export default function Menu({
               {x.title}
             </h2>
             <div>
-              <div className="flex flex-col gap-7">
+              <div className="flex flex-col flex-wrap gap-7 lg:flex-row lg:justify-center">
                 {x.deals.map((item) => (
                   <div
                     onClick={() => {
@@ -101,10 +120,14 @@ export default function Menu({
                       setSelectedItem(item);
                     }}
                     key={item.title}
-                    className="relative flex min-h-[150px] w-full cursor-pointer rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_2px_rgba(0,0,0,0.2)]"
+                    className="relative flex min-h-[150px] w-[full] cursor-pointer rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_4px_rgba(0,0,0,0.4)] lg:w-[340px]
+                    hover:shadow-[0px_0px_8px_rgba(226,27,112,0.6)]"
+
                   >
                     <div className="flex w-[150%] flex-col gap-1">
-                      <h2 className="text-[20px] font-[600]">{item.title}</h2>
+                      <h2 className="text-[20px] font-[600] lg:text-[18px]">
+                        {item.title}
+                      </h2>
                       <div className="flex gap-2">
                         <span className="text-[#e21b70]">Rs.{item.price}</span>
                         <span className="line-through decoration-[0.5]">
@@ -122,7 +145,7 @@ export default function Menu({
                     </div>
                     <button
                       onClick={(e) => e.stopPropagation()}
-                      className={`ease absolute flex h-[42px] cursor-pointer items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[42px] rounded-[50%] bg-gray-500"}`}
+                      className={`ease absolute flex h-[42px] cursor-pointer lg:scale-[0.9] items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[41px] rounded-[50%] bg-gray-500 hover:scale-[1.05]"}`}
                     >
                       {cartData.find((f) => f.title === item.title) && (
                         <span
@@ -142,12 +165,10 @@ export default function Menu({
                       </span>
 
                       <span
-                        onClick={() =>
-                          handleAddButton(item)
-                        }
-                        className="w-full"
+                        onClick={() => handleAddButton(item)}
+                        className="w-full text-[16px]"
                       >
-                        +
+                       <i className="fa-solid fa-plus"></i>
                       </span>
                     </button>
                   </div>
@@ -159,7 +180,7 @@ export default function Menu({
       ))}
 
       <div
-        className={`ease fixed flex items-center justify-center bg-white shadow-[0px_-3px_10px_rgba(0,0,0,0.2)] transition-all duration-200 ${cartData.length > 0 ? "translate-y-0" : "translate-y-[100%]"} bottom-0 z-10 min-h-[110px] w-full`}
+        className={`ease fixed flex items-center justify-center bg-white shadow-[0px_-3px_10px_rgba(0,0,0,0.2)] transition-all duration-200 lg:hidden ${cartData.length > 0 ? "translate-y-0" : "translate-y-[100%]"} bottom-0 z-10 min-h-[110px] w-full`}
       >
         <button
           onClick={() => setShowCart(true)}
@@ -190,6 +211,7 @@ export default function Menu({
         showCart={showCart}
         cartData={cartData}
         setCartData={setCartData}
+        cartArea={cartArea}
       />
     </div>
   );

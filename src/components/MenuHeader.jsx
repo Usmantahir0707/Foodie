@@ -9,7 +9,8 @@ export default function MenuHeader({
   isClicked,
 }) {
   const tabRef = useRef({});
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = useState(false);
+  const scrollRef = useRef()
 
   useEffect(()=>{
     setTimeout(()=>{
@@ -40,17 +41,40 @@ export default function MenuHeader({
     }, 800);
   };
 
+   const scrollBy = (direction, amount = 250) => {
+  const target = scrollRef.current;
+  if (!target) return;
+
+  target.scrollBy({
+    left: direction === "left" ? -amount : amount,
+    behavior: "smooth", 
+  });
+};
+
   return (
-    <header className="sticky top-0 z-10 flex h-[60px] items-center gap-5 bg-gray-100 px-4 shadow-[0px_2px_3px_rgba(0,0,0,0.3)]">
+    <header className="sticky top-0 z-10 flex h-[60px] items-center gap-5 bg-gray-100 px-4 shadow-[0px_2px_3px_rgba(0,0,0,0.3)] ">
+      
+
+      {/* Search menu items */}
       <div className="rounded-[50%] bg-white p-3 px-4 shadow-[0px_0px_12px_rgba(0,0,0,0.2)]">
         <i className="fa-solid fa-magnifying-glass text-[16px] text-gray-500"></i>
       </div>
-      <div className="flex h-full items-center gap-3 overflow-x-auto overflow-y-hidden pr-5 whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+
+     {/* Left scroll button */}
+      <button
+        onClick={() => scrollBy("left")}
+        className="active:text-[var(--primary-color)] h-[45px] w-[45px] bg-gray-200 hover:bg-gray-300 z-10 rounded-[10%] hidden lg:flex items-center justify-center shadow"
+      >
+        <i className="fa-solid fa-chevron-left"></i>
+      </button>
+      
+      {/* X-Scrollable flex*/}
+      <div ref={scrollRef} className="flex h-full items-center gap-3 overflow-x-auto overflow-y-hidden pr-5 whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {restaurant.menu.map((x) => (
           <div
             ref={(e) => (tabRef.current[x.title] = e)}
             onClick={() => handleClick(x.title)}
-            className="relative flex h-full min-w-[100px] flex-shrink-0 items-center justify-center px-2 pb-2 text-[16px] font-[400]"
+            className="relative cursor-pointer hover:bg-gray-200 flex h-full min-w-[100px] flex-shrink-0 items-center justify-center px-2 pb-2 text-[16px] font-[400]"
             key={x.title}
           >
             {x.title}
@@ -71,6 +95,13 @@ export default function MenuHeader({
           </div>
         ))}
       </div>
+      {/* Right scroll button */}
+      <button
+        onClick={() => scrollBy("right")}
+        className="active:text-[var(--primary-color)] h-[45px] w-[45px] bg-gray-200 hover:bg-gray-300 z-10 rounded-[10%] hidden lg:flex items-center justify-center shadow"
+      >
+        <i className="fa-solid fa-chevron-right"></i>
+      </button>
     </header>
   );
 }

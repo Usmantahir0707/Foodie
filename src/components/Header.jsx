@@ -68,7 +68,7 @@ export default function Header({ fullHeader, blockHeader }) {
     }
   }, [firebase.user]);
   // ========================================================================
-
+console.log(cartData)
   return (
     <header
       role="Header"
@@ -133,15 +133,20 @@ export default function Header({ fullHeader, blockHeader }) {
         />
 
         {/* cart */}
-        <div className="relative flex cursor-pointer justify-end">
-          <span className="absolute top-[-20px] right-0">
+        <div
+        onClick={()=>{
+          if(cartData.length === 0) return
+          navigate('/restaurant', {state: cartData[0].resTitle})}
+        } 
+        className="relative top-[-10px] items-center flex cursor-pointer gap-1 justify-end">
+          <span className="mb-2 text-[14px]">
             {cartData.reduce((acc, item) => acc + item.qty, 0)}
           </span>
-          <i className="fa-solid fa-cart-shopping text-[20px]"></i>
+          <i className="fa-solid fa-bag-shopping text-[24px] text-gray-600"></i>
         </div>
       </div>
       {/* =============================================================================== */}
-      {/* ///////////// Middle Flex with things like -location -estimated time*/}
+      {/* ///////////// Middle Flex with  -location -estimated time*/}
       <div
         role="location Estimatmed time"
         className={`relative mt-1 flex items-center cursor-pointer justify-self-center rounded-md py-1 ${
@@ -166,7 +171,7 @@ export default function Header({ fullHeader, blockHeader }) {
                 {userAddress.replace(/^plot\b/i, "")}
               </span>
             ) : (
-              <span className="text-[10px]">Add Location</span>
+              <span className="w-[70px] inline-block truncate text-[10px]">Add Location</span>
             )}
           </span>
         </div>
@@ -222,7 +227,7 @@ export default function Header({ fullHeader, blockHeader }) {
                 className="mt-6 h-[28vh] w-[80%] self-center shadow-md"
               />
               {loading && (
-                <div className="shimmer absolute top-[-40px] right-0 h-[29vh] w-[80%] self-center overflow-hidden rounded-md shadow-md sm:top-[27%]"></div>
+                <div className="shimmer absolute top-[28%]  h-[29vh] w-[80%] self-center overflow-hidden rounded-md shadow-md lg:top-[30%]"></div>
               )}
 
               <p className="mt-6 w-[80%] self-center text-[13px]">

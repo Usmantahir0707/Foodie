@@ -6,6 +6,7 @@ export default function Cart({
   showCart,
   cartData,
   setCartData,
+  cartArea,
 }) {
   const scrollRef = useRef();
   const [scrolled, setScrolled] = useState(false);
@@ -51,8 +52,12 @@ export default function Cart({
 
   return (
     <div
-      className={`ease fixed inset-0 z-10 overflow-hidden bg-white transition-all duration-[200ms] md:inset-[15%_0_15%_70%] ${showCart ? "translate-x-0" : "translate-x-[100%]"}`}
-    >
+  className={`ease select-none fixed inset-0 z-50 overflow-hidden bg-white transition-all duration-400
+    lg:inset-[0%_0_0%_70%]
+    ${showCart ? "translate-x-0" : "translate-x-[100%] lg:translate-x-0"}
+    ${cartArea ? "opacity-100" : "opacity-0"} 
+  `}
+>
       {/* //////// HEader */}
       <header
         className={`flex justify-between p-[16px] ${scrolled ? "shadow-[0px_3px_10px_rgba(0,0,0,0.2)]" : ""}`}
@@ -66,25 +71,26 @@ export default function Cart({
 
         <button
           onClick={() => setShowCart(false)}
-          className="flex h-[34px] w-[34px] items-center justify-center rounded-2xl shadow-[0px_0px_8px_rgba(0,0,0,0.3)]"
+          className="flex h-[34px] w-[34px] items-center justify-center rounded-2xl shadow-[0px_0px_8px_rgba(0,0,0,0.3)] lg:hidden"
         >
           <i className="fa-solid fa-xmark text-[22px] text-gray-600"></i>
         </button>
       </header>
 
-      <div className="flex h-full flex-col pt-[16px]">
+      <div className="flex h-full flex-col pt-[16px] lg:pt-0">
         {/* ///////// Mid area with Y auto */}
         <div
           ref={scrollRef}
           className="flex flex-col overflow-x-hidden overflow-y-auto px-4 pb-[265px]"
         >
-          <div className="flex w-full justify-between bg-gray-100 p-2">
+          <div className="flex w-full justify-between bg-gray-100 p-2 lg:scale-[0.8]">
             <button
+              title="(45 - 60 mins)"
               onClick={() => setOption("delivery")}
               className={`w-full ${option === "delivery" ? "rounded-md border border-gray-300 bg-white p-1.5 px-4" : ""} `}
             >
               <h3 className="font-[500]">Delivery</h3>
-              <p className="text-[14px]">Standard (45 - 60 mins)</p>
+              <p className="text-[14px] lg:max-w-[100px] truncate">Standard (45 - 60 mins)</p>
             </button>
             <button
               onClick={() => setOption("pick-up")}
@@ -96,7 +102,7 @@ export default function Cart({
 
           {/* \\\\\\\ Empty-Cart image */}
           {!cartData.length > 0 ? (
-            <div className="flex justify-center pt-[150px]">
+            <div className="flex justify-center pt-[150px] lg:pt-[60px]">
               <div className="flex flex-col items-center gap-1">
                 <img
                   className="mb-3 max-w-[100px]"
@@ -111,9 +117,9 @@ export default function Cart({
             ""
           )}
 
-          <div className="mt-[16px]">
+          <div className="mt-[16px] lg:mt-[0px]">
             {cartData.length > 0 ? (
-              <h3 className="text-[18px] font-[700]">Your items</h3>
+              <h3 className="text-[18px] font-[700] lg:text-[16px] lg:font-[600]">Your items</h3>
             ) : (
               ""
             )}
@@ -122,7 +128,7 @@ export default function Cart({
             {cartData.map((x) => (
               <div
                 key={x.title}
-                className="flex gap-2 border-b border-gray-300 py-4"
+                className="flex gap-2 border-b border-gray-300 py-4 lg:scale-[0.9]"
               >
                 <div className="w-[25%]">
                   <img src={x.img} alt="" />
@@ -135,7 +141,7 @@ export default function Cart({
                     <div className="flex h-[32px] w-[90px] items-center justify-between gap-2 rounded-2xl shadow-[0px_0px_3px_rgba(0,0,0,0.2)]">
                       <span
                         onClick={() => handleMinus(x.title)}
-                        className="flex h-full w-full items-center justify-center rounded-2xl shadow-[0px_0px_3px_rgba(0,0,0,0.2)]"
+                        className="flex h-full w-full items-center justify-center rounded-2xl shadow-[0px_0px_3px_rgba(0,0,0,0.2)] cursor-pointer"
                       >
                         {x.qty < 2 ? (
                           <i className="fa-regular fa-trash-can"></i>
@@ -146,7 +152,7 @@ export default function Cart({
                       <span>{x.qty}</span>
                       <span
                         onClick={() => handleAdd(x.title)}
-                        className="flex h-full w-full items-center justify-center rounded-[50%] shadow-[0px_0px_3px_rgba(0,0,0,0.2)]"
+                        className="flex h-full w-full items-center justify-center rounded-[50%] shadow-[0px_0px_3px_rgba(0,0,0,0.2)] cursor-pointer"
                       >
                         <i className="fa-solid fa-plus"></i>
                       </span>
@@ -164,7 +170,7 @@ export default function Cart({
                       onClick={() => setShowCart(false)}
                       className="fa-solid fa-plus pt-0.5 text-[17px]"
                     ></i>
-                    <p onClick={() => setShowCart(false)}>Add more items</p>
+                    <p className="cursor-pointer" onClick={() => setShowCart(false)}>Add more items</p>
                   </div>
                   <dl className="flex flex-col gap-1 pt-[16px]">
                     <div className="flex justify-between">
@@ -194,11 +200,11 @@ export default function Cart({
         </div>
         {/* //////// Bottom fixed total area */}
         <div
-          className={`fixed bottom-0 flex w-full flex-col gap-4 bg-white pt-3 pb-5 ${!maxScrolled ? "shadow-[0px_-3px_10px_rgba(0,0,0,0.2)]" : ""}`}
+          className={`fixed bottom-0 flex w-full flex-col gap-4 bg-white pt-3 lg:pt-2 pb-5 lg:pb-4 ${!maxScrolled ? "shadow-[0px_-3px_10px_rgba(0,0,0,0.2)]" : ""}`}
         >
           <div className="flex justify-between px-5">
             <div>
-              <h5 className="text-[18px] font-[400]">Total</h5>
+              <h5 className="text-[18px] lg:text-[17px] font-[400]">Total</h5>
               <p
                 onClick={() =>
                   scrollRef.current.scrollTo({
@@ -206,7 +212,7 @@ export default function Cart({
                     behavior: "smooth",
                   })
                 }
-                className="underline decoration-1 underline-offset-3"
+                className="underline decoration-1 underline-offset-3 cursor-pointer"
               >
                 See summary
               </p>
@@ -224,7 +230,7 @@ export default function Cart({
           <div className="flex w-full justify-center px-5">
             <button
               onClick={() => console.log("first")}
-              className={`h-[50px] w-full rounded-md font-[500] text-white ${cartData.length > 0 ? "bg-[#e21b70]" : "pointer-events-none bg-gray-400"}`}
+              className={`h-[50px] lg:scale-[0.9] w-full rounded-md font-[500] text-white ${cartData.length > 0 ? "bg-[#e21b70]" : "pointer-events-none bg-gray-400"}`}
             >
               Review payment and address
             </button>

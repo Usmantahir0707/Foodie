@@ -42,7 +42,7 @@ export default function ProfileCompStep1({
   }, [locating, initAutocomplete]);
 
   return (
-    <div className="flex flex-col items-center gap-10 md:gap-3">
+    <div className="flex flex-col items-center gap-10 md:gap-3 scale-[0.9]">
       {!locating && 
       <h2 className="text-[26px] font-[600]">
         Hey {userDetails.name}! Just a couple more steps to get started.

@@ -4,7 +4,8 @@ import dataURLtoFile from "../utility/dataURLtoFile";
 import { useFirebase } from "../contexts/fireBaseContext";
 import useFirebaseStorage from "../hooks/useFirebaseStorage";
 import { useNavigate } from "react-router-dom";
-import { address } from "motion/react-client";
+import plane from '../assets/plane.jpg'
+import hand from '../assets/hand.jpg'
 
 export default function ProfileCompStep3({ userDetails, imageCaptured, userAddress, setStep }) {
   const [codeSent, setCodeSent] = useState(false);
@@ -110,9 +111,9 @@ const inputRefs = useRef([]);
   };
 
   return (
-    <div className="flex flex-col items-center gap-[80px] pt-[60px]">
+    <div className="flex flex-col items-center gap-[80px] lg:gap-[60px] pt-[10px] scale-[0.88]">
       <button
-        className="absolute top-6 left-4 px-3 text-[26px] text-[#e21b70]"
+        className="absolute top-[-20px] left-[-20px] px-3 text-[26px] text-[#e21b70]"
         onClick={() => setStep(2)}
       >
         <i className="fa-solid fa-angle-left"></i>
@@ -127,6 +128,15 @@ const inputRefs = useRef([]);
             ? `Enter the 6-digit code sent to ${userDetails.phoneNumber}`
             : `Send OTP to ${userDetails.phoneNumber}`}
         </p>
+      </div>
+
+      <div className="h-[120px] w-[220px]">
+        {
+          codeSent ? 
+          <img className="w-[90%] object-contain translate-y-[-30px]" src={hand} alt="" />
+          : 
+          <img className="w-full object-contain" src={plane} alt="" />
+        }
       </div>
 
       {codeSent ? (
@@ -151,7 +161,7 @@ const inputRefs = useRef([]);
           <div className="flex flex-col items-center gap-4">
             <button
               onClick={handleVerifyOtp}
-              className={`w-[250px] bg-[#e21b70] p-4 text-[20px] text-white active:scale-[98%] ${otpLoading ? "pointer-events-none bg-gray-600" : "bg-[#e21b70]"}`}
+              className={`w-[250px] bg-[#e21b70] p-4 scale-[0.9] text-[20px] text-white active:scale-[88%] ${otpLoading ? "pointer-events-none bg-gray-600" : "bg-[#e21b70]"}`}
             >
               {!otpLoading ? (
                 "Verify"
@@ -173,8 +183,9 @@ const inputRefs = useRef([]);
       ) : (
         <div className="flex flex-col items-center gap-4">
           <button
+          
             onClick={handleSendOtp}
-            className={`w-[250px] p-4 text-[20px] text-white active:scale-[0.98] ${otpLoading ? "pointer-events-none bg-gray-600" : "bg-[#e21b70]"}`}
+            className={`w-[250px] p-4 text-[20px] text-white lg:scale-[0.9] lg:active:scale-[0.88] active:scale-[0.98] ${otpLoading ? "pointer-events-none bg-gray-600" : "bg-[#e21b70]"}`}
           >
             {!otpLoading ? (
               "Send Otp"

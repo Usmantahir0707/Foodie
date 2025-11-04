@@ -61,7 +61,8 @@ export default function Input({
       {endIcon === "filter" && 
       <i
       onClick={()=> setShowFilters((p)=> !p)}
-      className="fa-solid fa-sliders"></i>}
+      className="fa-solid fa-sliders p-3 bg-white shadow-[0_0_5px_rgba(0,0,0,0.4)] cursor-pointer rounded-[50%]
+       active:bg-[var(--primary-color)] active:text-white"></i>}
       {endIcon === "cross" && <div  className="h-full px-1 w-[30px] justify-center cursor-pointer flex items-center" tabIndex={0}  ref={crossRef} onClick={crossHandler}><i className="fa-solid fa-xmark"></i></div>}
       
 

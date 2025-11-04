@@ -83,11 +83,11 @@ export const useGoogleMapApi = (mapContainerRef) => {
       setMap(mapInstance);
       setMarker(markerInstance);
       mapLoadedRef.current = true;
-      setLoading(true);
+      setLoading(false);
     } catch (err) {
       console.error("Google Maps init error:", err);
       setError("Failed to initialize Google Maps.");
-      setLoading(true)
+      setLoading(false)
     }
   }, [mapContainerRef, loadGoogleMapsScript, reverseGeocode]);
 

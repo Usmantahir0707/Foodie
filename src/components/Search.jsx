@@ -3,7 +3,7 @@ import Overlay from "./Overlay";
 import data from "../../data";
 import Input from "./Input";
 import { useSearch } from "../contexts/searchContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Search({setShowFilters}) {
   const {
@@ -14,6 +14,7 @@ export default function Search({setShowFilters}) {
     showPop,
     setShowPop,
   } = useSearch();
+  const location = useLocation();
   const popularRef = useRef();
   const crossRef = useRef();
   const navigate = useNavigate();
@@ -67,7 +68,7 @@ export default function Search({setShowFilters}) {
 
   return (
     <>
-      <div role="search-wrapper" className="mt-4 self-center w-2xs lg:self-auto lg:ml-[180px]">
+      <div role="search-wrapper" className={`mt-4 self-center w-2xs lg:self-auto mx-auto  z-30 ${location.pathname === '/home' && 'lg:translate-x-[-150px]'}`}>
         <Input
           startIcon={showPop ? "glass" : ""}
           onKeyDown={handleKeyDown}
@@ -96,7 +97,7 @@ export default function Search({setShowFilters}) {
               onClick={(e) => e.stopPropagation()}
               tabIndex={-1}
               ref={popularRef}
-              className="mt-[4px] mr-5 flex w-[280px] animate-[fader_0.8s_ease] flex-col justify-self-center rounded-md bg-white px-6 py-2 pb-8 text-start"
+              className="mt-[210px] lg:mt-[180px] flex w-[280px] animate-[fader_0.8s_ease] flex-col justify-self-center rounded-md bg-white px-6 py-2 pb-8 text-start"
             >
               <div className="flex items-center gap-1">
                 <i className="fa-solid fa-star text-amber-700"></i>
@@ -121,7 +122,7 @@ export default function Search({setShowFilters}) {
               </div>
             </div>
           ) : (
-            <div className="mt-1 mr-3 flex max-h-[200px] w-[240px] flex-col gap-1 justify-self-center overflow-y-auto rounded-b-md bg-white text-start">
+            <div className="mt-[210px] lg:mt-[180px] mr-3 flex max-h-[200px] w-[240px] flex-col gap-1 justify-self-center overflow-y-auto rounded-b-md bg-white text-start">
               {data
                 .flatMap((f) => {
                   const query = searchInput.toLowerCase();

@@ -17,6 +17,7 @@ export default function Restaurant() {
   const menuRef = useRef({})
   const isClicked = useRef(false);
 
+  
   return (
     <main className="bg-gray-100 md:pr-[30vw]">
       {/* /////// Profile */}

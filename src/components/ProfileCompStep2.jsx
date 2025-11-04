@@ -7,9 +7,9 @@ export default function ProfileCompStep2({imageCaptured, setImageCaptured, setSt
  const [cameraActive, setCameraActive] = useState(false); 
 
   return (
-    <div className="flex flex-col items-center gap-[60px] pt-[62px] md:pt-[20px]">
+    <div className="flex flex-col items-center gap-[60px] pt-[62px] md:pt-[20px] scale-[0.9]">
           <button
-            className="absolute top-6 left-4 px-3 text-[26px] text-[#e21b70]"
+            className="absolute top-[-10px] left-[-10px] px-3 text-[26px] text-[#e21b70]"
             onClick={() => setStep(1)}
           >
             <i className="fa-solid fa-angle-left"></i>

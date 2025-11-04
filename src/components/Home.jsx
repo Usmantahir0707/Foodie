@@ -23,19 +23,19 @@ export default function Home() {
   const { showOverlay } = useSearch();
 
   useEffect(() => {
-    console.log(filters)
-    const valuesCheck = Object.values(filters).every((x)=> x === '')
-    console.log(valuesCheck)
-    
+    const valuesCheck = Object.values(filters).every((x) => x === "");
+
     if (valuesCheck) {
+      window.scrollTo(0, 0);
       setShowFilterResults(false);
     } else {
+      window.scrollTo(0, 0);
       setShowFilterResults(true);
     }
   }, [filters]);
 
   return (
-    <div>
+    <div className="overflow-x-hidden">
       {/* Fixed Filter Menu =============================== */}
       <div
         className={`fixed inset-0 z-40 transform rounded-tr-[10px] rounded-br-[10px] bg-white p-3 shadow-[0_0_6px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out lg:top-[111px] lg:bottom-[0px] lg:left-0 lg:w-[280px] lg:p-0 lg:pr-0.5 lg:pb-0.5 ${showFilters && !showOverlay && "translate-x-0 lg:translate-x-0"} ${showFilters && showOverlay && "translate-0"} ${showOverlay && !showFilters && "translate-x-[-100%]"} ${!showFilters && !showOverlay && "translate-x-[-100%] lg:translate-x-0"} `}
@@ -53,8 +53,8 @@ export default function Home() {
         <motion.main
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }}
-          className="flex flex-col pr-4 pl-4 lg:pl-[340px]"
+          transition={{ duration: 0.6, ease: "easeInOut" }}
+          className="flex flex-col pr-4 pl-4 lg:pl-[325px]"
         >
           {/* search */}
           <Search setShowFilters={setShowFilters} />
@@ -69,7 +69,7 @@ export default function Home() {
             </h2>
             <button
               onClick={() => navigate("/login")}
-              className="mt-4 flex items-center rounded-[4px] bg-[#e21b70] px-[16px] py-2 text-[11px] font-[500] text-white"
+              className="mt-3.5 flex items-center rounded-[4px] bg-[#e21b70] px-[16px] py-2 text-[12px] lg:text-[11px] font-[500] text-white"
             >
               Sign up
             </button>

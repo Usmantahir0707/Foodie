@@ -38,7 +38,7 @@ export default function Filters({
 
       {/* Heading */}
       <div className="flex items-center gap-2">
-        <h2 className="text-[22px] font-[700] sm:text-[18px]">Filters</h2>
+        <h2 className="text-[25px] font-[700] sm:text-[18px]">Filters</h2>
         <span
           onClick={() => {
             setFilters({
@@ -60,7 +60,8 @@ export default function Filters({
         {/* Sort section */}
         <div>
           <h3 className="text-[18px] font-[600] sm:text-[15px]">Sort by</h3>
-          {sortArray.map((x) => (
+          <div className="flex flex-col gap-0.5 lg:gap-0">
+            {sortArray.map((x) => (
             <div
               onClick={() => {
                 if (x === "Relevance") {
@@ -81,6 +82,8 @@ export default function Filters({
               <span className="text-[16px] sm:text-[14px]">{x}</span>
             </div>
           ))}
+          </div>
+          
         </div>
 
         {/* Quick filters section */}
@@ -172,9 +175,9 @@ export default function Filters({
       {/* //Asolute close button */}
       <div
         onClick={() => setShowFilters(false)}
-        className="absolute top-4 right-5 w-fit p-2 lg:hidden"
+        className="absolute top-4 right-5 w-fit p-2 lg:hidden rounded-[50%] active:scale-[0.98]"
       >
-        <i className="fa-regular fa-circle-xmark text-[20px]"></i>
+        <i className="fa-regular fa-circle-xmark text-[26px]"></i>
       </div>
 
       {/*flex ==  Remove-all and Apply button*/}

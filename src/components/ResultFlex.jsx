@@ -34,7 +34,7 @@ const filteredData = data.filter(item => deepSearch(item, query));
     <div className="mt-4 flex flex-wrap justify-center gap-[60px]">
       {    
       filteredData.map((x, i) => (
-        <Link className="flex justify-center" key={x.id} to={'/restaurant'} state={x.title}>
+        <Link className="flex justify-center scale-[0.95]" key={x.id} to={'/restaurant'} state={x.title}>
         <div
           key={i}
           className="flex w-[95%] bg-gray-100 flex-col gap-1 overflow-hidden rounded-md shadow-[0px_0px_5px_rgba(0,0,0,0.3)] md:w-[250px]"
@@ -58,7 +58,9 @@ const filteredData = data.filter(item => deepSearch(item, query));
             </div>
           </div>
 
-          <div className="text-gray-400 text-[14px] px-[12px]">$ {x.cuisine}</div>
+          <div className="px-[12px] text-[14px] text-gray-400">
+                    <span className="text-[var(--primary-color)]">{x.assets.budget}</span> {x.cuisine}
+                  </div>
           <div className="text-gray-400 text-[14px] px-[12px] pb-[12px]">
             <i className="fa-solid fa-clock"></i>
             {''} {x.assets.time} - <i className="fa-solid fa-bicycle"></i>
