@@ -62,19 +62,20 @@ export default function Home() {
           {/* promo */}
           <div
             role="signUp-promo"
-            className="relative mt-5 h-[120px] w-full rounded-[8px] bg-[#FFDDDD] p-3 px-4 text-[16px] font-[600] text-[#2E3138] lg:w-[90%]"
+            className="relative mt-5 h-[140px] w-full rounded-[8px] bg-[#FFDDDD] p-3 px-4 text-[16px] font-[600] text-[#2E3138] lg:w-[88%]"
           >
             <h2>
               Free delivery on first <br /> order
             </h2>
             <button
               onClick={() => navigate("/login")}
-              className="mt-3.5 flex items-center rounded-[4px] bg-[#e21b70] px-[16px] py-2 text-[12px] lg:text-[11px] font-[500] text-white"
+              className="mt-4 flex items-center rounded-[4px] bg-[#e21b70] px-[19px] py-2.5 text-[12px] lg:text-[11px] font-[500] text-white hover:bg-white hover:border hover:text-[#e21b70]
+              active:bg-white active:border active:text-[#e21b70] hover:scale-[1.02] active:scale-[0.98]"
             >
               Sign up
             </button>
             <img
-              className="absolute top-2 right-4 w-[100px]"
+              className="absolute top-4 right-4 w-[100px]"
               src={delivery}
               alt=""
             />

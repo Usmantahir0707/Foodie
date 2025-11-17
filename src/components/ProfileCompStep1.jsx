@@ -95,13 +95,13 @@ export default function ProfileCompStep1({
           />
           <button
               onClick={fetchUserLocation}
-              className="w-[40%] h-[50px] bg-[#e21b70] text-white rounded"
+              className="w-[200px] h-[50px] bg-[#e21b70] text-white rounded"
             >
               Auto locate
             </button>
           {/* Map container */}
-          <div ref={mapContainerRef} className="w-full h-[220px] rounded shadow" />
-
+          <div ref={mapContainerRef} className={`w-full self-center max-w-[500px] h-[220px] rounded shadow ${loading && 'hidden'}`} />
+          {loading && <div className="shimmer w-full self-center max-w-[500px] h-[220px] rounded shadow"></div>}
           {/* Status messages */}
           {loading && <p className="mt-2 text-gray-500">Fetching your location...</p>}
           {error && <p className="mt-2 text-red-500">{error}</p>}
@@ -120,7 +120,7 @@ export default function ProfileCompStep1({
                 setLocating(false)
                 resetMap()
               }}
-              className={`w-[45%] h-[50px]  text-white rounded
+              className={`w-[150px] h-[50px]  text-white rounded
                 ${address ? 'bg-[#e21b70]' : 'bg-gray-300 pointer-events-none'}`}
             >
               Save
@@ -130,7 +130,7 @@ export default function ProfileCompStep1({
               setLocating(false)
               resetMap()
              }}
-             className="w-[45%] h-[50px] bg-[#e21b70] text-white rounded">
+             className="w-[150px] h-[50px] bg-[#e21b70] text-white rounded">
               Cancel
             </button>
           </div>

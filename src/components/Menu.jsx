@@ -16,27 +16,27 @@ export default function Menu({
   const [selectedItem, setSelectedItem] = useState(null);
   const { cartData, setCartData } = useCart();
   const [cartArea, setCartArea] = useState(() => {
-  if (typeof window !== "undefined") {
-    return window.innerWidth < 1024;
-  }
-  return false; 
-});
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 1024;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    window.scrollTo(0,0)
-  const handleScroll = () => {
-    if(window.scrollY > 470){
-      setCartArea(true)
-    }else{
-      window.innerWidth > 1024 && setCartArea(false)
-    }
-  };
+    window.scrollTo(0, 0);
+    const handleScroll = () => {
+      if (window.scrollY > 310) {
+        setCartArea(true);
+      } else {
+        window.innerWidth > 1024 && setCartArea(false);
+      }
+    };
 
-  window.addEventListener("scroll", handleScroll);
-  handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
 
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (showOverlay) {
@@ -48,21 +48,46 @@ export default function Menu({
     return () => (document.body.style.overflow = "auto");
   }, [showOverlay]);
 
+      // == Handle Add
   const handleAddButton = (item) => {
     const { title, price, desc, img } = item;
+
     if (item.options) {
+      const checkExist = cartData.find((f) => f.title === title);
+
+      if(checkExist){
+        setCartData((p) =>
+            p.map((x) =>
+              x.title === title
+                ? { ...x, qty: x.qty + 1, resTitle: restaurant.title }
+                : { ...x, resTitle: restaurant.title },
+            ),
+          )
+      } else {
+        setSelectedItem(item);
       setShowOverlay(true);
+      }
+      
     } else {
       setCartData((p) => {
         const existingItem = p.find((f) => f.title === title);
         if (existingItem) {
           return p.map((x) =>
-            x.title === title ? { ...x, qty: x.qty + 1, resTitle:restaurant.title } : {...x, resTitle:restaurant.title},
+            x.title === title
+              ? { ...x, qty: x.qty + 1, resTitle: restaurant.title }
+              : { ...x, resTitle: restaurant.title },
           );
         } else {
           return [
             ...p,
-            { title: title, price: price, desc: desc, img: img, qty: 1, resTitle:restaurant.title },
+            {
+              title: title,
+              price: price,
+              desc: desc,
+              img: img,
+              qty: 1,
+              resTitle: restaurant.title,
+            },
           ];
         }
       });
@@ -76,7 +101,7 @@ export default function Menu({
         .filter((f) => f.qty > 0),
     );
   };
-console.log(restaurant)
+  console.log(cartData);
   return (
     <div className="bg-white pb-[150px]">
       {/* Item Profile of clicked item*/}
@@ -116,13 +141,11 @@ console.log(restaurant)
                 {x.deals.map((item) => (
                   <div
                     onClick={() => {
-                      setShowOverlay(true);
                       setSelectedItem(item);
+                      setShowOverlay(true);
                     }}
                     key={item.title}
-                    className="relative flex min-h-[150px] w-[full] cursor-pointer rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_4px_rgba(0,0,0,0.4)] lg:w-[340px]
-                    hover:shadow-[0px_0px_8px_rgba(226,27,112,0.6)]"
-
+                    className="relative flex min-h-[150px] w-[full] cursor-pointer rounded-[10px] border border-gray-300 p-3 pr-6 shadow-[0px_0px_4px_rgba(0,0,0,0.4)] hover:shadow-[0px_0px_8px_rgba(226,27,112,0.6)] lg:w-[340px]"
                   >
                     <div className="flex w-[150%] flex-col gap-1">
                       <h2 className="text-[20px] font-[600] lg:text-[18px]">
@@ -145,7 +168,7 @@ console.log(restaurant)
                     </div>
                     <button
                       onClick={(e) => e.stopPropagation()}
-                      className={`ease absolute flex h-[42px] cursor-pointer lg:scale-[0.9] items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[41px] rounded-[50%] bg-gray-500 hover:scale-[1.05]"}`}
+                      className={`ease absolute flex h-[42px] cursor-pointer items-center justify-center text-[25px] font-[500] text-white transition-all duration-200 lg:scale-[0.9] ${cartData.find((f) => f.title === item.title) ? "right-0 bottom-0 w-[120px] gap-2 rounded-md bg-[#e21b70]" : "right-2 bottom-3 w-[41px] rounded-[50%] bg-gray-600 hover:scale-[1.05]"}`}
                     >
                       {cartData.find((f) => f.title === item.title) && (
                         <span
@@ -168,7 +191,7 @@ console.log(restaurant)
                         onClick={() => handleAddButton(item)}
                         className="w-full text-[16px]"
                       >
-                       <i className="fa-solid fa-plus"></i>
+                        <i className="fa-solid fa-plus"></i>
                       </span>
                     </button>
                   </div>

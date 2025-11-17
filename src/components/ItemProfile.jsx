@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Overlay from "./Overlay";
 import { useCart } from "../contexts/cartContext";
 
 export default function ItemProfile({ selectedItem, setShowOverlay }) {
   const [showSticky, setShowSticky] = useState(false);
   const { cartData, setCartData } = useCart();
+  const scrollRef = useRef()
   const [count, setCount] = useState(
     (p) => cartData.find((f) => f.title === selectedItem.title)?.qty ?? 1,
   );
@@ -19,6 +20,14 @@ export default function ItemProfile({ selectedItem, setShowOverlay }) {
     }
   });
 
+  useEffect(()=>{
+    if(selectedItem.options){
+      scrollRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      })
+    }
+  },[])
 
   const handleAddCart = () => {
     setCartData((p) => {
@@ -27,7 +36,7 @@ export default function ItemProfile({ selectedItem, setShowOverlay }) {
         ? p.map((x) =>
             x.title === selectedItem.title ? { ...x, qty: count } : x,
           )
-        : [
+        : [...p,
             {
               title: selectedItem.title,
               desc: selectedItem.desc,
@@ -77,7 +86,9 @@ export default function ItemProfile({ selectedItem, setShowOverlay }) {
 
         <img className="w-[220px] self-center" src={selectedItem.img} alt="" />
         <div className="sticky">
-          <h2 className="w-fit px-2 text-[22px] font-[500]">
+          <h2 
+          
+          className="w-fit px-2 text-[22px] font-[500]">
             {selectedItem.title}
           </h2>
         </div>
@@ -86,12 +97,15 @@ export default function ItemProfile({ selectedItem, setShowOverlay }) {
           <div className="w-fit px-4 text-[18px] font-[500]">
             Rs. {selectedItem.price}
           </div>
-          <p className="px-2">{selectedItem.desc}</p>
+          <p
+          
+          className="px-2">{selectedItem.desc}</p>
 
           {/*flavours and otions for item*/}
           {selectedItem.options &&
             selectedItem.options.map((option) => (
               <div
+              ref={scrollRef}
                 key={option.title}
                 className="w-[90%] self-center rounded-2xl bg-[var(--secondary-color)] p-2 shadow"
               >

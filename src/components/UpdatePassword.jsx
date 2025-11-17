@@ -5,7 +5,7 @@ import PhoneInput from "./PhoneInput";
 import { useFirebase } from "../contexts/fireBaseContext";
 import LoadingDots from "./LoadingDots";
 
-export default function UpdatePassword({ setChangePassword }) {
+export default function UpdatePassword({ setChangePassword, setSection }) {
   const [step, setStep] = useState(1);
   const [password, setPassword] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -151,9 +151,12 @@ export default function UpdatePassword({ setChangePassword }) {
     <>
       <div>
         <div className="fixed inset-0 z-10 flex h-full w-full flex-col bg-gray-100 p-2 px-4">
-          <div>
+           {/* Close btn */}
+          <div className="self-baseline">
             <i
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                setSection ? setSection('main') : window.location.reload()
+              }}
               className="fa-solid fa-arrow-left cursor-pointer p-2 text-[15px]"
             ></i>
           </div>
@@ -186,7 +189,7 @@ export default function UpdatePassword({ setChangePassword }) {
               <h3 className="self-center font-[400] mt-4 text-[19px]">
                 Choose recovery method
               </h3>
-              <div className="mt-3 flex flex-col gap-1">
+              <div className="mt-3 items-baseline flex flex-col gap-1">
                 <label className="text-[15px]">
                   <input
                     className="mr-2 accent-pink-500"

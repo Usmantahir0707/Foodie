@@ -37,7 +37,8 @@ const filteredData = data.filter(item => deepSearch(item, query));
         <Link className="flex justify-center scale-[0.95]" key={x.id} to={'/restaurant'} state={x.title}>
         <div
           key={i}
-          className="flex w-[95%] bg-gray-100 flex-col gap-1 overflow-hidden rounded-md shadow-[0px_0px_5px_rgba(0,0,0,0.3)] md:w-[250px]"
+          className="flex w-[95%] bg-gray-100 flex-col gap-1 overflow-hidden rounded-md shadow-[0px_0px_5px_rgba(0,0,0,0.3)] md:w-[250px]  hover:scale-[1.015] hover:shadow-[0px_0px_13px_rgba(226,27,112,0.6)]
+          active:scale-[1.015] active:shadow-[0px_0px_13px_rgba(226,27,112,0.6)]"
         >
           <img className="w-full object-contain" src={x.assets.img} alt="" />
           <div

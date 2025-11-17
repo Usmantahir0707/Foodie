@@ -42,6 +42,7 @@ export function FirebaseProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
   // --- Listen for auth changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -65,7 +66,7 @@ export function FirebaseProvider({ children }) {
   // --- Phone Auth 
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
-      const siteKey = "6LfjHvArAAAAAJteLdnRVTpHldSVEQbmj4HThYS9"; // <-- your reCAPTCHA v2 key
+      
 
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
@@ -150,6 +151,7 @@ export function FirebaseProvider({ children }) {
         logoutUser,
         updateUserPassword,
         updateData,
+
       }}
     >
       {children}

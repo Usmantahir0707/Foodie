@@ -30,7 +30,7 @@ export default function Filters({
       {/* Scroll up button (hidden in phones)*/}
       <div 
       onClick={()=> scrollBy('top')}
-      className="absolute top-2 right-3 hidden cursor-pointer rounded-3xl bg-gray-200 p-2 px-3 lg:inline-block">
+      className="absolute active:text-[var(--primary-color)] top-2 right-3 hidden cursor-pointer rounded-3xl bg-gray-200 p-2 px-3 lg:inline-block">
         <button>
           <i className="fa-solid fa-chevron-up"></i>
         </button>
@@ -164,7 +164,7 @@ export default function Filters({
       {/* Scroll down button (hidden in phones)*/}
       <div 
       onClick={()=> scrollBy('bottom')}
-      className="absolute right-3 bottom-2 hidden cursor-pointer rounded-3xl bg-gray-200 p-2 px-3 sm:inline-block">
+      className="absolute right-3 bottom-2 hidden cursor-pointer rounded-3xl bg-gray-200 p-2 px-3 sm:inline-block active:text-[var(--primary-color)]">
         <button>
           <i className="fa-solid fa-chevron-down"></i>
         </button>

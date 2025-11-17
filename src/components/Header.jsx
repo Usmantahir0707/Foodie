@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFirebase } from "../contexts/fireBaseContext";
 import { useGoogleMapApi } from "../hooks/useGoogleMapsApi";
 import Overlay from "./Overlay";
+import UserMenu from "./UserMenu";
 
 export default function Header({ fullHeader, blockHeader }) {
   const showHeader = useScrollVisibility(100);
@@ -68,7 +69,7 @@ export default function Header({ fullHeader, blockHeader }) {
     }
   }, [firebase.user]);
   // ========================================================================
-console.log(cartData)
+
   return (
     <header
       role="Header"
@@ -101,24 +102,32 @@ console.log(cartData)
         ) : (
           <div
             onClick={() => setUserMenu((p) => !p)}
-            className="h-[45px] flex gap-1 cursor-pointer"
+            className="flex h-[45px] cursor-pointer gap-1"
           >
             {userData.profilePic ? (
               <img
-              onClick={()=> firebase.logoutUser()}
-                className="w-[40px] h-[40px] object-center overflow-hidden rounded-[50%] flex-shrink-0"
+                className="h-[40px] w-[40px] flex-shrink-0 overflow-hidden rounded-[50%] object-center"
                 src={userData.profilePic}
                 alt=""
               />
-            ) :
-              <i className="fa-solid fa-user self-start rounded-[8px] bg-gray-300 p-2 text-[18px]"></i>}
-              <span className="text-[12px]"
-              >
-                {userData.name}
-                </span>
-            
-           
+            ) : (
+              <i className="fa-solid fa-user self-start rounded-[8px] bg-gray-300 p-2 text-[18px]"></i>
+            )}
+            <span className="text-[12px]">{userData.name}</span>
           </div>
+        )}
+        {/* User-Profile-Menu */}
+        {userMenu && (
+          <UserMenu
+            userData={userData}
+            setUserMenu={setUserMenu}
+            setLocating={setLocating}
+            logout={() => {
+              firebase.logoutUser();
+              navigate("/login");
+            }}
+            
+          />
         )}
 
         {/* logo */}
@@ -134,11 +143,12 @@ console.log(cartData)
 
         {/* cart */}
         <div
-        onClick={()=>{
-          if(cartData.length === 0) return
-          navigate('/restaurant', {state: cartData[0].resTitle})}
-        } 
-        className="relative top-[-10px] items-center flex cursor-pointer gap-1 justify-end">
+          onClick={() => {
+            if (cartData.length === 0) return;
+            navigate("/restaurant", { state: cartData[0].resTitle });
+          }}
+          className="relative top-[-10px] flex cursor-pointer items-center justify-end gap-1"
+        >
           <span className="mb-2 text-[14px]">
             {cartData.reduce((acc, item) => acc + item.qty, 0)}
           </span>
@@ -149,10 +159,10 @@ console.log(cartData)
       {/* ///////////// Middle Flex with  -location -estimated time*/}
       <div
         role="location Estimatmed time"
-        className={`relative mt-1 flex items-center cursor-pointer justify-self-center rounded-md py-1 ${
+        className={`relative mt-1 flex cursor-pointer items-center justify-self-center rounded-md py-1 ${
           !blockHeader
             ? "max-w-[50vw] min-w-[10vw] justify-center sm:right-0 sm:max-w-[30vw] sm:min-w-[10vw] sm:bg-blue-50 lg:absolute lg:bottom-0"
-            : "mt-2 flex  flex-row justify-between gap-3 px-5 pb-0 w-[100%]  "
+            : "mt-2 flex w-[100%] flex-row justify-between gap-3 px-5 pb-0"
         }`}
       >
         {/* location */}
@@ -161,17 +171,19 @@ console.log(cartData)
         >
           <span
             onClick={() => setLocating(true)}
-            className="flex gap-1 items-center w-[full] truncate text-gray-600"
+            className="flex w-[full] items-center gap-1 truncate text-gray-600"
           >
             <i
               className={`fa-solid fa-location-dot text-[13px] text-[#792b4c]`}
             ></i>{" "}
             {userAddress ? (
-              <span className="w-[full] inline-block truncate text-[10px]">
+              <span className="inline-block w-[full] truncate text-[10px]">
                 {userAddress.replace(/^plot\b/i, "")}
               </span>
             ) : (
-              <span className="w-[70px] inline-block truncate text-[10px]">Add Location</span>
+              <span className="inline-block w-[70px] truncate text-[10px]">
+                Add Location
+              </span>
             )}
           </span>
         </div>
@@ -180,7 +192,7 @@ console.log(cartData)
         {!blockHeader ? (
           ""
         ) : (
-          <div className="w-fit rounded-md bg-gray-300 px-1 pt-0.5 pb-1 mb-1">
+          <div className="mb-1 w-fit rounded-md bg-gray-300 px-1 pt-0.5 pb-1">
             <i className="fa-regular fa-clock mr-2"></i>
             <span className="text-[10px]">Estimated time 23min..</span>
           </div>
@@ -227,7 +239,7 @@ console.log(cartData)
                 className="mt-6 h-[28vh] w-[80%] self-center shadow-md"
               />
               {loading && (
-                <div className="shimmer absolute top-[28%]  h-[29vh] w-[80%] self-center overflow-hidden rounded-md shadow-md lg:top-[30%]"></div>
+                <div className="shimmer absolute top-[27%] h-[30vh] w-[80%] self-center overflow-hidden rounded-md shadow-md lg:top-[28%]"></div>
               )}
 
               <p className="mt-6 w-[80%] self-center text-[13px]">
