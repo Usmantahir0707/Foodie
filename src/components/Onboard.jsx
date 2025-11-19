@@ -24,7 +24,7 @@ export default function Onboard() {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#FFEEDA]">
-      <img onClick={() => console.log(user)} src={logo} alt="" />
+      <img className="scale-[0.6]" src={logo} alt="" />
       <img className="dropShadow absolute bottom-0 left-0" src={food1} alt="" />
     </div>
   );

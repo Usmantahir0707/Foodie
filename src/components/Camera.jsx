@@ -28,7 +28,7 @@ export default function Camera({setCameraActive, setImageCaptured}) {
     streamRef.current = null;
   }
   if (videoRef.current) {
-    videoRef.current.srcObject = null; // 👈 clear video element
+    videoRef.current.srcObject = null; 
   }
 }, []);
 
@@ -51,7 +51,6 @@ export default function Camera({setCameraActive, setImageCaptured}) {
       onClick={()=>{
         stopCamera();
         setCameraActive(false)
-        console.log('ds')
       }}
       className="bg-white/30 md:scale-[0.8] cursor-pointer z-10 backdrop-blur-md h-[40px] w-[40px] absolute p-0 
       flex items-center justify-center rounded-[50%] top-2 right-2">
@@ -60,15 +59,18 @@ export default function Camera({setCameraActive, setImageCaptured}) {
       <video autoPlay ref={videoRef} 
       className="rounded-md w-[320px] h-[234px]">
       </video>
-      <div className="text-[#e21b70] flex justify-around">
+      <div className="text-[#e21b70] flex justify-around ">
         <div 
         onClick={()=>{
           captureImage();
             stopCamera();          
           setCameraActive(false);            
         }}
-        className="p-3 cursor-pointer">
-          <i className="fa-solid fa-camera text-[27px]"></i>
+        className="p-3 cursor-pointer shadow-[0_2px_12px_var(--primary-color)] rounded-[50%] mt-3">
+          
+            <i className="fa-solid fa-camera text-[29px]"></i>
+        
+          
         </div>
 
         

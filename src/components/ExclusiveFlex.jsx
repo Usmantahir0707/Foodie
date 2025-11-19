@@ -16,7 +16,7 @@ export default function ExclusiveFlex() {
         setExclusiveDeals((p) =>
           data.filter((f) => f.menu.some((s) => s.title === "Exclusive Deals")));
       })
-      .catch((e) => console.log(e))
+      .catch((err) => console.log(err))
   }, []);
 
   const scrollBy = (direction, amount = 250) => {

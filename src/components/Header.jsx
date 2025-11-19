@@ -51,23 +51,21 @@ export default function Header({ fullHeader, blockHeader }) {
   // =======================================================================
 
   // Fire User and his realtime data
-  useEffect(() => {
-    const user = firebase.user;
-    if (user) {
-      setActiveUser(user);
-      const getData = async () => {
-        try {
-          const snap = await firebase.getData(`users/${user.uid}`);
-          const data = snap.val();
-          setUserData(data);
-          setUserAddress(data.address);
-        } catch (e) {
-          console.log(e);
-        }
-      };
-      getData();
-    }
-  }, [firebase.user]);
+ useEffect(() => {
+  const user = firebase.user;
+  if (!user) return;
+  console.log(user)
+  setActiveUser(user);
+
+  const unsubscribe = firebase.onValueData(`users/${user.uid}`, (data) => {
+    if (!data) return;
+    setUserData({ ...data, uid: user.uid });
+    setUserAddress(data.address);
+  });
+
+  return () => unsubscribe && unsubscribe();
+}, [firebase.user]);
+
   // ========================================================================
 
   return (
@@ -201,6 +199,7 @@ export default function Header({ fullHeader, blockHeader }) {
         {/* Update Address */}
         {locating && (
           <Overlay
+            onClick={()=> setLocating(false)}
             style={{
               display: "flex",
               justifyContent: "center",
@@ -236,10 +235,10 @@ export default function Header({ fullHeader, blockHeader }) {
 
               <div
                 ref={mapContainerRef}
-                className="mt-6 h-[28vh] w-[80%] self-center shadow-md"
+                className={`mt-6 h-[28vh] w-[80%] self-center shadow-md ${loading && 'hidden'}`}
               />
               {loading && (
-                <div className="shimmer absolute top-[27%] h-[30vh] w-[80%] self-center overflow-hidden rounded-md shadow-md lg:top-[28%]"></div>
+                <div className="shimmer mt-6 h-[28vh] w-[80%] self-center shadow-md"></div>
               )}
 
               <p className="mt-6 w-[80%] self-center text-[13px]">

@@ -6,7 +6,7 @@ import {
   useEffect,
 } from "react";
 import { initializeApp } from "firebase/app";
-import { getDatabase, set, ref, get, update } from "firebase/database";
+import { getDatabase, set, ref, get, update, onValue } from "firebase/database";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -42,7 +42,6 @@ export function FirebaseProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   // --- Listen for auth changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
@@ -58,16 +57,23 @@ export function FirebaseProvider({ children }) {
   const loginUserWithEmail = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-  // -- Database helpers
+  // -- Realtime-Database helpers
   const putData = (key, data) => set(ref(database, key), data);
   const getData = (key) => get(ref(database, key));
   const updateData = (path, data) => update(ref(database, path), data);
 
+  // RealTime Listner (continuous updates)
+  const onValueData = (key, callback) => {
+    const dbRef = ref(database, key);
+    const unsubscribe = onValue(dbRef, (snapshot) => {
+      callback(snapshot.val());
+    });
+    return unsubscribe;
+  };
+
   // --- Phone Auth 
   const recaptcha = () => {
     if (!window.recaptchaVerifier) {
-      
-
       window.recaptchaVerifier = new RecaptchaVerifier(
         auth,
         "recaptcha-container",
@@ -78,7 +84,8 @@ export function FirebaseProvider({ children }) {
     }
     return window.recaptchaVerifier;
   };
-// send verification code
+
+  // send verification code
   const sendOtp = async (phoneNumber) => {
     if (!phoneNumber) return console.log("Enter valid number");
     try {
@@ -96,7 +103,8 @@ export function FirebaseProvider({ children }) {
       throw err;
     }
   };
-// -- verify otp
+
+  // -- verify otp
   const verifyOtp = async (otp, confirmationObjRef) => {
     try {
       if (!confirmationObjRef.current) throw new Error("No OTP session.");
@@ -151,7 +159,7 @@ export function FirebaseProvider({ children }) {
         logoutUser,
         updateUserPassword,
         updateData,
-
+        onValueData, 
       }}
     >
       {children}

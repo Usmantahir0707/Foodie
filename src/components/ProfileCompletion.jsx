@@ -22,7 +22,7 @@ export default function ProfileCompletion() {
   if (loading)
     return (
       <div className="fixed inset-0 flex flex-col items-center justify-center gap-2">
-        <img className="animate-bounce" src={logo} alt="" />
+        <img className="animate-bounce scale-[0.6]" src={logo} alt="" />
         <div className="loading h-[80px] w-[80px] rounded-[50%] border-t-3 border-[#e21b70]"></div>
       </div>
     );
