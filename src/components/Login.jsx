@@ -13,7 +13,7 @@ export default function Login() {
     view: "height",
     minView: 530,
     maxView: 900,
-    minValue: 0.6,
+    minValue: 0.8,
     maxValue: 1,
     unit: "none",
     capped: 768,

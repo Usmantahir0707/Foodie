@@ -96,7 +96,7 @@ export default function PhoneInput({ userData, setUserData, setError, enter, con
   return (
     <div
       role="container"
-      className={`flex h-[50px] max-w-[270px] items-center gap-2 bg-[#EDEDED] p-2 text-[14px] ${conCss ? conCss : ''}`}
+      className={`flex h-[50px] max-w-[265px] items-center gap-2 bg-[#EDEDED] p-2 text-[14px] ${conCss ? conCss : ''}`}
     >
       <div
         onClick={() => {
